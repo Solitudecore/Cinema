@@ -111,10 +111,7 @@ async function fetchWithRetry<T>(
   throw lastError || new Error("TMDB request failed.");
 }
 
-function isValidCacheableData(
-  data: unknown,
-  skipEmptyCache = true,
-): boolean {
+function isValidCacheableData(data: unknown, skipEmptyCache = true): boolean {
   if (!data || typeof data !== "object") {
     return false;
   }
@@ -163,7 +160,6 @@ async function tmdbRequest<T>(
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },
       },
-      
     );
 
     if (
@@ -248,14 +244,11 @@ export const getTopRatedMovies = (page = 1) => {
 };
 
 export const searchMovies = (query: string, page = 1) => {
-  return tmdbRequest<MovieResponse>(
-    "/search/movie",
-    {
-      query: query.trim(),
-      page,
-      include_adult: "false",
-    },
-  );
+  return tmdbRequest<MovieResponse>("/search/movie", {
+    query: query.trim(),
+    page,
+    include_adult: "false",
+  });
 };
 
 export const getMovieDetails = (
@@ -345,15 +338,13 @@ export const prefetchAppData = async () => {
 
     uniqueMovies.forEach((movie) => {
       if (movie.poster_path) {
-        Image.prefetch(
-          `${IMAGE_URL}w342${movie.poster_path}`,
-        ).catch(() => {});
+        Image.prefetch(`${IMAGE_URL}w342${movie.poster_path}`).catch(() => {});
       }
 
       if (movie.backdrop_path) {
-        Image.prefetch(
-          `${IMAGE_URL}w780${movie.backdrop_path}`,
-        ).catch(() => {});
+        Image.prefetch(`${IMAGE_URL}w780${movie.backdrop_path}`).catch(
+          () => {},
+        );
       }
     });
 
@@ -363,13 +354,9 @@ export const prefetchAppData = async () => {
 
         const trailer =
           details.videos?.results?.find(
-            (video) =>
-              video.site === "YouTube" &&
-              video.type === "Trailer",
+            (video) => video.site === "YouTube" && video.type === "Trailer",
           ) ||
-          details.videos?.results?.find(
-            (video) => video.site === "YouTube",
-          );
+          details.videos?.results?.find((video) => video.site === "YouTube");
 
         if (trailer?.key) {
           Image.prefetch(
@@ -390,9 +377,7 @@ export const clearTmdbCache = async (): Promise<number> => {
 
   const keys = await AsyncStorage.getAllKeys();
 
-  const cacheKeys = keys.filter((key) =>
-    key.startsWith("tmdb_cache_"),
-  );
+  const cacheKeys = keys.filter((key) => key.startsWith("tmdb_cache_"));
 
   if (cacheKeys.length > 0) {
     await AsyncStorage.multiRemove(cacheKeys);
