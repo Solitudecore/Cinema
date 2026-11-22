@@ -19,6 +19,7 @@ import {
   StatusBar,
   useWindowDimensions,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -294,8 +295,17 @@ export default function MovieDetailsScreen() {
           />
         )}
 
-        <View style={styles.scrimTop} />
-        <View style={styles.scrimBottom} />
+        <LinearGradient
+          colors={[
+            "rgba(8, 8, 14, 0.12)",
+            "rgba(8, 8, 14, 0.35)",
+            "rgba(8, 8, 14, 0.92)",
+          ]}
+          locations={[0, 0.5, 1]}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
+          style={styles.backdropGradient}
+        />
 
         <Pressable
           style={[
@@ -738,21 +748,12 @@ const createStyles = (colors: ThemeColors) =>
       height: 255,
       backgroundColor: colors.surface,
     },
-    scrimTop: {
+    backdropGradient: {
       position: "absolute",
       top: 0,
-      left: 0,
-      right: 0,
-      height: "36%",
-      backgroundColor: "rgba(8, 8, 14, 0.35)",
-    },
-    scrimBottom: {
-      position: "absolute",
-      left: 0,
       right: 0,
       bottom: 0,
-      height: "58%",
-      backgroundColor: "rgba(8, 8, 14, 0.72)",
+      left: 0,
     },
     backFab: {
       position: "absolute",
