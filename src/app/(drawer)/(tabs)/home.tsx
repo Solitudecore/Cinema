@@ -21,6 +21,7 @@ import {
   getTopRatedMovies,
   IMAGE_URL,
 } from "../../../services/tmdb";
+import { LinearGradient } from "expo-linear-gradient";
 import { getRecentlyViewed } from "../../../services/historyStorage";
 import { Movie } from "../../../types/movie";
 import type { ThemeColors } from "../../../context/ThemeContext";
@@ -410,9 +411,19 @@ export default function HomeScreen() {
               resizeMode="cover"
             />
 
-            <View style={styles.scrimTop} />
-            <View style={styles.scrimMid} />
-            <View style={styles.scrimBottom} />
+            <LinearGradient
+              colors={[
+                "rgba(8, 8, 14, 0.08)",
+                "rgba(8, 8, 14, 0.36)",
+                "rgba(8, 8, 14, 0.72)",
+                "rgba(8, 8, 14, 0.92)",
+              ]}
+              locations={[0, 0.35, 0.65, 1]}
+              start={{ x: 0.5, y: 0 }}
+              end={{ x: 0.5, y: 1 }}
+              pointerEvents="none"
+              style={styles.billboardGradient}
+            />
 
             <View
               style={[
@@ -756,6 +767,13 @@ const createStyles = (colors: ThemeColors) =>
       fontSize: 10,
       fontWeight: "900",
       lineHeight: 11,
+    },
+    billboardGradient: {
+      position: "absolute",
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
     },
     top10Label: {
       color: "#FFFFFF",
