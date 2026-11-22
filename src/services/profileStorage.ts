@@ -20,11 +20,6 @@ export const getUserProfile = async (): Promise<UserProfile> => {
   }
 };
 
-export const saveUserProfile = async (
-  profile: UserProfile
-): Promise<void> => {
-  await AsyncStorage.setItem(
-    PROFILE_KEY,
-    JSON.stringify(profile)
-  );
+export const saveUserProfile = async (profile: UserProfile): Promise<void> => {
+  await AsyncStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
 };

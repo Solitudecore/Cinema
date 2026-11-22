@@ -128,7 +128,6 @@ export function CustomTabList(props: TabListProps) {
           isCompact && styles.innerContainerCompact,
         ]}
       >
-        
         <View style={styles.brandGroup}>
           <View style={styles.brandSquare}>
             <Text style={styles.brandSquareLetter}>C</Text>
@@ -140,9 +139,7 @@ export function CustomTabList(props: TabListProps) {
           )}
         </View>
 
-
         <View style={styles.triggersRow}>{props.children}</View>
-
 
         {!isCompact && (
           <View style={styles.qualityPill}>

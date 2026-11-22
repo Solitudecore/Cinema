@@ -14,9 +14,7 @@ try {
       shouldShowList: true,
     }),
   });
-} catch {
-  
-}
+} catch {}
 
 export async function requestNotificationPermission(): Promise<boolean> {
   if (Platform.OS === "web") {
@@ -30,9 +28,7 @@ export async function requestNotificationPermission(): Promise<boolean> {
           name: "CineVerse Reminders",
           importance: Notifications.AndroidImportance.MAX,
         });
-      } catch {
-        
-      }
+      } catch {}
     }
 
     const { status: existingStatus } =
@@ -47,7 +43,7 @@ export async function requestNotificationPermission(): Promise<boolean> {
     if (finalStatus !== "granted") {
       Alert.alert(
         "Permission Denied",
-        "Notification permission was denied. Please enable notifications in your device settings."
+        "Notification permission was denied. Please enable notifications in your device settings.",
       );
       return false;
     }
@@ -55,7 +51,7 @@ export async function requestNotificationPermission(): Promise<boolean> {
     return true;
   } catch (error) {
     console.log("Native notification fallback active:", error);
- 
+
     return true;
   }
 }
@@ -63,7 +59,7 @@ export async function requestNotificationPermission(): Promise<boolean> {
 export async function sendCineVerseNotification(
   title: string,
   body: string,
-  forceSend = false
+  forceSend = false,
 ): Promise<void> {
   try {
     if (!forceSend) {
@@ -91,7 +87,6 @@ export async function sendCineVerseNotification(
 
     Alert.alert(title, body);
   } catch {
-  
     Alert.alert(title, body);
   }
 }

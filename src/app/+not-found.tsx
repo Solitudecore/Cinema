@@ -38,10 +38,7 @@ export default function NotFoundScreen() {
 
   const renderVisualBlock = () => (
     <View
-      style={[
-        styles.visualBlock,
-        isLandscape && styles.visualBlockLandscape,
-      ]}
+      style={[styles.visualBlock, isLandscape && styles.visualBlockLandscape]}
     >
       <View style={styles.codeBadge}>
         <Text style={styles.codeBadgeText}>ERROR 404</Text>
@@ -58,10 +55,7 @@ export default function NotFoundScreen() {
 
   const renderMessageBlock = () => (
     <View
-      style={[
-        styles.messageBlock,
-        isLandscape && styles.messageBlockLandscape,
-      ]}
+      style={[styles.messageBlock, isLandscape && styles.messageBlockLandscape]}
     >
       <View style={styles.titleRow}>
         <View style={styles.titleAccent} />
@@ -81,15 +75,12 @@ export default function NotFoundScreen() {
           isLandscape && { textAlign: "left", marginBottom: 18 },
         ]}
       >
-        The screen you are looking for does not exist or has been moved. You
-        can return to the CineVerse home feed and keep exploring.
+        The screen you are looking for does not exist or has been moved. You can
+        return to the CineVerse home feed and keep exploring.
       </Text>
 
       <View
-        style={[
-          styles.actionsRow,
-          isLandscape && { alignItems: "flex-start" },
-        ]}
+        style={[styles.actionsRow, isLandscape && { alignItems: "flex-start" }]}
       >
         <Pressable
           style={({ pressed }) => [
@@ -133,7 +124,7 @@ export default function NotFoundScreen() {
         },
       ]}
       showsVerticalScrollIndicator={false}
-    > 
+    >
       <View style={styles.topBar}>
         <View style={styles.brandGroup}>
           <View style={styles.brandSquare}>
@@ -145,13 +136,7 @@ export default function NotFoundScreen() {
         </View>
       </View>
 
-
-      <View
-        style={[
-          styles.mainCard,
-          isLandscape && styles.mainCardLandscape,
-        ]}
-      >
+      <View style={[styles.mainCard, isLandscape && styles.mainCardLandscape]}>
         {renderVisualBlock()}
         {renderMessageBlock()}
       </View>

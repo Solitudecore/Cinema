@@ -45,10 +45,7 @@ export default function TrailerPlayer({
 
   return (
     <View
-      style={[
-        styles.container,
-        { width: activeWidth, height: activeHeight },
-      ]}
+      style={[styles.container, { width: activeWidth, height: activeHeight }]}
       onLayout={(e) => {
         if (!width) {
           const w = e.nativeEvent.layout.width;

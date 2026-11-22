@@ -91,7 +91,11 @@ export default function SearchScreen() {
 
   const isLandscape = width > height;
   const numColumns = isLandscape ? 2 : 1;
-  const sidePadding = Math.max(insets.left, insets.right, isLandscape ? 18 : 14);
+  const sidePadding = Math.max(
+    insets.left,
+    insets.right,
+    isLandscape ? 18 : 14,
+  );
   const gridGap = 10;
 
   const cardWidth = useMemo(() => {
@@ -119,12 +123,12 @@ export default function SearchScreen() {
 
   const genreMap = useMemo(
     () => new Map(genres.map((g) => [g.id, g.name])),
-    [genres]
+    [genres],
   );
 
   const savedIds = useMemo(
     () => new Set(watchlistItems.map((i) => i.movie.id)),
-    [watchlistItems]
+    [watchlistItems],
   );
 
   const activeFilterCount = useMemo(() => {
@@ -141,9 +145,7 @@ export default function SearchScreen() {
       try {
         const genreList = await getGenres();
         setGenres(genreList);
-      } catch {
-        
-      }
+      } catch {}
     };
 
     loadGenres();
@@ -172,7 +174,7 @@ export default function SearchScreen() {
       return () => {
         isActive = false;
       };
-    }, [])
+    }, []),
   );
 
   const applyNetflixFiltersAndSort = useCallback(
@@ -183,7 +185,7 @@ export default function SearchScreen() {
         if (selectedGenres.length > 0) {
           const movieGenres = m.genre_ids || [];
           const matchesAll = selectedGenres.every((id) =>
-            movieGenres.includes(id)
+            movieGenres.includes(id),
           );
           if (!matchesAll) return false;
         }
@@ -227,7 +229,7 @@ export default function SearchScreen() {
         return 0;
       });
     },
-    [selectedGenres, minRating, selectedEra, selectedLanguage, sortBy]
+    [selectedGenres, minRating, selectedEra, selectedLanguage, sortBy],
   );
 
   const fetchMovies = useCallback(
@@ -253,10 +255,7 @@ export default function SearchScreen() {
         setMovies((prev) => {
           if (!append) return processed;
           const existingIds = new Set(prev.map((m) => m.id));
-          return [
-            ...prev,
-            ...processed.filter((m) => !existingIds.has(m.id)),
-          ];
+          return [...prev, ...processed.filter((m) => !existingIds.has(m.id))];
         });
         setPage(targetPage);
         setTotalPages(response.total_pages || 1);
@@ -272,7 +271,7 @@ export default function SearchScreen() {
         setLoadingMore(false);
       }
     },
-    [query, selectedGenres, minRating, applyNetflixFiltersAndSort]
+    [query, selectedGenres, minRating, applyNetflixFiltersAndSort],
   );
 
   useEffect(() => {
@@ -292,16 +291,14 @@ export default function SearchScreen() {
     try {
       await clearRecentSearches();
       setRecentSearches([]);
-    } catch {
-      
-    }
+    } catch {}
   };
 
   const toggleGenre = (genreId: number) => {
     setSelectedGenres((prev) =>
       prev.includes(genreId)
         ? prev.filter((id) => id !== genreId)
-        : [...prev, genreId]
+        : [...prev, genreId],
     );
   };
 
@@ -351,10 +348,7 @@ export default function SearchScreen() {
       </Pressable>
 
       <Pressable
-        style={[
-          styles.quickPill,
-          minRating > 0 && styles.quickPillActive,
-        ]}
+        style={[styles.quickPill, minRating > 0 && styles.quickPillActive]}
         onPress={() => setMinRating((prev) => (prev === 7.5 ? 0 : 7.5))}
       >
         <Text
@@ -373,9 +367,7 @@ export default function SearchScreen() {
           selectedEra === "2025_2026" && styles.quickPillActive,
         ]}
         onPress={() =>
-          setSelectedEra((prev) =>
-            prev === "2025_2026" ? "all" : "2025_2026"
-          )
+          setSelectedEra((prev) => (prev === "2025_2026" ? "all" : "2025_2026"))
         }
       >
         <Text
@@ -393,10 +385,7 @@ export default function SearchScreen() {
         return (
           <Pressable
             key={genre.id}
-            style={[
-              styles.quickPill,
-              active && styles.quickPillActive,
-            ]}
+            style={[styles.quickPill, active && styles.quickPillActive]}
             onPress={() => toggleGenre(genre.id)}
           >
             <Text
@@ -440,10 +429,7 @@ export default function SearchScreen() {
           {item.poster_path ? (
             <Image
               source={{ uri: `${IMAGE_URL}w185${item.poster_path}` }}
-              style={[
-                styles.poster,
-                isLandscape && { width: 58, height: 84 },
-              ]}
+              style={[styles.poster, isLandscape && { width: 58, height: 84 }]}
             />
           ) : (
             <View
@@ -569,10 +555,7 @@ export default function SearchScreen() {
           ))}
 
           {minRating > 0 && (
-            <Pressable
-              style={styles.activeTag}
-              onPress={() => setMinRating(0)}
-            >
+            <Pressable style={styles.activeTag} onPress={() => setMinRating(0)}>
               <Text style={styles.activeTagText}>★ {minRating}+</Text>
               <Ionicons name="close" size={13} color="#FFFFFF" />
             </Pressable>
@@ -610,7 +593,6 @@ export default function SearchScreen() {
           </Pressable>
         </ScrollView>
       )}
-
 
       {recentSearches.length > 0 && !query.trim() && (
         <View
@@ -670,7 +652,6 @@ export default function SearchScreen() {
         </View>
       )}
 
-
       <View style={styles.feedHeaderRow}>
         <View style={styles.feedTitleGroup}>
           <View style={styles.feedAccentBar} />
@@ -700,7 +681,6 @@ export default function SearchScreen() {
         },
       ]}
     >
-      
       <View style={[styles.searchRow, isLandscape && { marginBottom: 6 }]}>
         <View
           style={[
@@ -750,7 +730,6 @@ export default function SearchScreen() {
         </Pressable>
       </View>
 
-
       {!isLandscape && (
         <View style={styles.ribbonWrapper}>{renderQuickPills()}</View>
       )}
@@ -775,9 +754,7 @@ export default function SearchScreen() {
           data={movies}
           keyExtractor={(item) => String(item.id)}
           numColumns={numColumns}
-          columnWrapperStyle={
-            numColumns > 1 ? { gap: gridGap } : undefined
-          }
+          columnWrapperStyle={numColumns > 1 ? { gap: gridGap } : undefined}
           renderItem={renderMovieItem}
           ListHeaderComponent={listHeader}
           showsVerticalScrollIndicator={false}
@@ -813,7 +790,6 @@ export default function SearchScreen() {
           }
         />
       )}
-
 
       <Modal
         visible={filterModalVisible}

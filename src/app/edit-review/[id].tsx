@@ -47,7 +47,7 @@ export default function EditReviewScreen() {
   }>();
 
   const [resolvedMovieId, setResolvedMovieId] = useState<string | null>(
-    paramMovieId ?? null
+    paramMovieId ?? null,
   );
   const [targetReview, setTargetReview] = useState<Review | null>(null);
   const [movieMeta, setMovieMeta] = useState<{
@@ -87,7 +87,7 @@ export default function EditReviewScreen() {
         const candidateKeys = allKeys.filter(
           (k) =>
             k.toLowerCase().includes("review") &&
-            !k.toLowerCase().includes("user")
+            !k.toLowerCase().includes("user"),
         );
 
         for (const key of candidateKeys) {
@@ -99,7 +99,7 @@ export default function EditReviewScreen() {
 
             if (Array.isArray(parsed)) {
               const found = parsed.find(
-                (item: Review) => item && String(item.id) === String(id)
+                (item: Review) => item && String(item.id) === String(id),
               );
               if (found) {
                 const mId = String(found.movieId || key.replace(/\D/g, ""));
@@ -113,7 +113,7 @@ export default function EditReviewScreen() {
               for (const [mId, list] of Object.entries(parsed)) {
                 if (Array.isArray(list)) {
                   const found = list.find(
-                    (item: Review) => item && String(item.id) === String(id)
+                    (item: Review) => item && String(item.id) === String(id),
                   );
                   if (found) {
                     setResolvedMovieId(mId);
@@ -125,9 +125,7 @@ export default function EditReviewScreen() {
                 }
               }
             }
-          } catch {
-            
-          }
+          } catch {}
         }
       } catch {
         Alert.alert("Error", "Could not load review.");
@@ -154,9 +152,7 @@ export default function EditReviewScreen() {
             year: details.release_date ? details.release_date.slice(0, 4) : "",
           });
         }
-      } catch {
-        
-      }
+      } catch {}
     })();
 
     return () => {
@@ -192,7 +188,7 @@ export default function EditReviewScreen() {
               content: content.trim(),
               rating,
             }
-          : item
+          : item,
       );
 
       await saveReviews(String(mId), updatedList);
@@ -221,7 +217,7 @@ export default function EditReviewScreen() {
               setSaving(true);
               const currentList = await getReviews(String(mId));
               const filtered = currentList.filter(
-                (item) => String(item.id) !== String(id)
+                (item) => String(item.id) !== String(id),
               );
               await saveReviews(String(mId), filtered);
               router.back();
@@ -232,7 +228,7 @@ export default function EditReviewScreen() {
             }
           },
         },
-      ]
+      ],
     );
   };
 
@@ -306,12 +302,7 @@ export default function EditReviewScreen() {
                 size={isLandscape ? 19 : 22}
                 color={active ? "#FBBF24" : colors.muted}
               />
-              <Text
-                style={[
-                  styles.starNum,
-                  active && styles.starNumActive,
-                ]}
-              >
+              <Text style={[styles.starNum, active && styles.starNumActive]}>
                 {star}
               </Text>
             </Pressable>
@@ -330,10 +321,7 @@ export default function EditReviewScreen() {
       </View>
 
       <TextInput
-        style={[
-          styles.input,
-          isLandscape && { minHeight: 96 },
-        ]}
+        style={[styles.input, isLandscape && { minHeight: 96 }]}
         placeholder="Share what stood out — story, acting, soundtrack..."
         placeholderTextColor={colors.muted}
         value={content}
@@ -393,13 +381,7 @@ export default function EditReviewScreen() {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        
-        <View
-          style={[
-            styles.topBar,
-            isLandscape && { marginBottom: 12 },
-          ]}
-        >
+        <View style={[styles.topBar, isLandscape && { marginBottom: 12 }]}>
           <Pressable
             style={[
               styles.iconButton,
@@ -434,7 +416,9 @@ export default function EditReviewScreen() {
 
         {isLandscape ? (
           <View style={styles.landscapeGrid}>
-            <View style={styles.landscapeLeft}>{renderMovieAndRatingCard()}</View>
+            <View style={styles.landscapeLeft}>
+              {renderMovieAndRatingCard()}
+            </View>
             <View style={styles.landscapeRight}>{renderEditorCard()}</View>
           </View>
         ) : (

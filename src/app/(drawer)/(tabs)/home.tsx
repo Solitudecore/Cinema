@@ -63,11 +63,9 @@ const HorizontalMovieCard = React.memo(function HorizontalMovieCard({
           </View>
         )}
 
-
         <View style={styles.miniBrandTag}>
           <Text style={styles.miniBrandText}>C</Text>
         </View>
-
 
         <View style={styles.ratingBadge}>
           <Text style={styles.ratingBadgeText}>
@@ -75,13 +73,11 @@ const HorizontalMovieCard = React.memo(function HorizontalMovieCard({
           </Text>
         </View>
 
-
         {showRank && index < 10 && (
           <View style={styles.rankBadgeWrap}>
             <Text style={styles.rankNumber}>{index + 1}</Text>
           </View>
         )}
-
 
         {showProgress && (
           <View style={styles.progressTrack}>
@@ -193,7 +189,11 @@ export default function HomeScreen() {
 
   const isLandscape = width > height;
   const numColumns = width >= 900 ? 5 : isLandscape ? 4 : 2;
-  const sidePadding = Math.max(insets.left, insets.right, isLandscape ? 18 : 14);
+  const sidePadding = Math.max(
+    insets.left,
+    insets.right,
+    isLandscape ? 18 : 14,
+  );
   const gridGap = isLandscape ? 10 : 12;
 
   const { cardWidth, cardHeight } = useMemo(() => {
@@ -219,7 +219,7 @@ export default function HomeScreen() {
 
   const savedIds = useMemo(
     () => new Set(watchlistItems.map((i) => i.movie.id)),
-    [watchlistItems]
+    [watchlistItems],
   );
 
   const loadRecentlyViewed = useCallback(async () => {
@@ -230,7 +230,7 @@ export default function HomeScreen() {
   useFocusEffect(
     useCallback(() => {
       loadRecentlyViewed();
-    }, [loadRecentlyViewed])
+    }, [loadRecentlyViewed]),
   );
 
   const loadInitialData = useCallback(async (isRefresh = false) => {
@@ -286,13 +286,12 @@ export default function HomeScreen() {
       setPopular((prev) => {
         const existingIds = new Set(prev.map((m) => m.id));
         const uniqueNew = (res.results || []).filter(
-          (m) => !existingIds.has(m.id)
+          (m) => !existingIds.has(m.id),
         );
         return [...prev, ...uniqueNew];
       });
       setPage(nextPage);
     } catch {
-      
     } finally {
       setLoadingMore(false);
     }
@@ -313,7 +312,7 @@ export default function HomeScreen() {
         await addMovie(movie);
       }
     },
-    [savedIds, addMovie, removeMovie]
+    [savedIds, addMovie, removeMovie],
   );
 
   const renderTrendingCard = useCallback(
@@ -327,7 +326,7 @@ export default function HomeScreen() {
         onPress={openMovie}
       />
     ),
-    [styles, colors.muted, openMovie]
+    [styles, colors.muted, openMovie],
   );
 
   const renderRecentCard = useCallback(
@@ -341,7 +340,7 @@ export default function HomeScreen() {
         onPress={openMovie}
       />
     ),
-    [styles, colors.muted, openMovie]
+    [styles, colors.muted, openMovie],
   );
 
   const renderStandardHorizontalCard = useCallback(
@@ -354,7 +353,7 @@ export default function HomeScreen() {
         onPress={openMovie}
       />
     ),
-    [styles, colors.muted, openMovie]
+    [styles, colors.muted, openMovie],
   );
 
   const renderPopularItem = useCallback(
@@ -378,11 +377,13 @@ export default function HomeScreen() {
       cardHeight,
       openMovie,
       handleToggleWatchlist,
-    ]
+    ],
   );
 
   const featuredMovie = trending[0];
-  const isFeaturedSaved = featuredMovie ? savedIds.has(featuredMovie.id) : false;
+  const isFeaturedSaved = featuredMovie
+    ? savedIds.has(featuredMovie.id)
+    : false;
   const trendingList = useMemo(() => trending.slice(1, 11), [trending]);
 
   const heroHeight = isLandscape
@@ -392,7 +393,6 @@ export default function HomeScreen() {
   const listHeader = useMemo(
     () => (
       <View>
-        
         {featuredMovie && (
           <Pressable
             style={[styles.billboardCard, { height: heroHeight }]}
@@ -409,7 +409,6 @@ export default function HomeScreen() {
               style={styles.billboardImage}
               resizeMode="cover"
             />
-
 
             <View style={styles.scrimTop} />
             <View style={styles.scrimMid} />
@@ -430,10 +429,7 @@ export default function HomeScreen() {
               </View>
 
               <Text
-                style={[
-                  styles.billboardTitle,
-                  isLandscape && { fontSize: 22 },
-                ]}
+                style={[styles.billboardTitle, isLandscape && { fontSize: 22 }]}
                 numberOfLines={2}
               >
                 {featuredMovie.title}
@@ -503,7 +499,6 @@ export default function HomeScreen() {
           </Pressable>
         )}
 
-
         {recentlyViewed.length > 0 && (
           <View style={styles.sectionBlock}>
             <View style={styles.sectionHeaderRow}>
@@ -524,7 +519,6 @@ export default function HomeScreen() {
           </View>
         )}
 
-
         <View style={styles.sectionBlock}>
           <View style={styles.sectionHeaderRow}>
             <Text style={styles.sectionTitle}>Top 10 Trending</Text>
@@ -542,7 +536,6 @@ export default function HomeScreen() {
             windowSize={3}
           />
         </View>
-
 
         <View style={styles.sectionBlock}>
           <View style={styles.sectionHeaderRow}>
@@ -582,7 +575,7 @@ export default function HomeScreen() {
       renderRecentCard,
       renderTrendingCard,
       renderStandardHorizontalCard,
-    ]
+    ],
   );
 
   if (loading) {
@@ -602,10 +595,7 @@ export default function HomeScreen() {
           color={colors.danger}
         />
         <Text style={styles.errorText}>{error}</Text>
-        <Pressable
-          style={styles.retryButton}
-          onPress={() => loadInitialData()}
-        >
+        <Pressable style={styles.retryButton} onPress={() => loadInitialData()}>
           <Text style={styles.retryButtonText}>Retry</Text>
         </Pressable>
       </View>
@@ -691,7 +681,7 @@ const createStyles = (colors: ThemeColors) =>
       color: "#FFFFFF",
       fontWeight: "800",
     },
-    
+
     billboardCard: {
       borderRadius: 20,
       overflow: "hidden",
@@ -864,7 +854,7 @@ const createStyles = (colors: ThemeColors) =>
       fontSize: 14,
       fontWeight: "800",
     },
-    
+
     sectionBlock: {
       marginBottom: 22,
     },
@@ -978,7 +968,7 @@ const createStyles = (colors: ThemeColors) =>
       fontWeight: "700",
       marginTop: 2,
     },
-    
+
     gridRow: {
       justifyContent: "flex-start",
       marginBottom: 14,

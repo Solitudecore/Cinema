@@ -24,13 +24,10 @@ export const getReviews = async (movieId: string): Promise<Review[]> => {
 
 export const saveReviews = async (
   movieId: string,
-  reviews: Review[]
+  reviews: Review[],
 ): Promise<void> => {
   try {
-    await AsyncStorage.setItem(
-      getStorageKey(movieId),
-      JSON.stringify(reviews)
-    );
+    await AsyncStorage.setItem(getStorageKey(movieId), JSON.stringify(reviews));
   } catch (error) {
     console.log("Error saving reviews:", error);
   }
@@ -38,7 +35,7 @@ export const saveReviews = async (
 
 export const addReview = async (
   movieId: string,
-  review: Review
+  review: Review,
 ): Promise<void> => {
   try {
     const reviews = await getReviews(movieId);
@@ -55,9 +52,7 @@ export const getAllReviews = async (): Promise<Review[]> => {
   try {
     const keys = await AsyncStorage.getAllKeys();
 
-    const reviewKeys = keys.filter((key) =>
-      key.startsWith("reviews_")
-    );
+    const reviewKeys = keys.filter((key) => key.startsWith("reviews_"));
 
     if (reviewKeys.length === 0) {
       return [];
@@ -91,14 +86,13 @@ export const getAllReviews = async (): Promise<Review[]> => {
 export const deleteReview = async (
   movieId: string,
   reviewId: string,
-  userId: string
+  userId: string,
 ): Promise<void> => {
   try {
     const reviews = await getReviews(movieId);
 
     const updatedReviews = reviews.filter(
-      (review) =>
-        !(review.id === reviewId && review.userId === userId)
+      (review) => !(review.id === reviewId && review.userId === userId),
     );
 
     await saveReviews(movieId, updatedReviews);

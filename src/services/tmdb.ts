@@ -8,7 +8,6 @@ export const IMAGE_URL = "https://image.tmdb.org/t/p/";
 
 const ACCESS_TOKEN = process.env.EXPO_PUBLIC_TMDB_ACCESS_TOKEN;
 
-
 const memoryCache = new Map<string, unknown>();
 let cacheVersion = 0;
 const pendingCacheWrites = new Set<Promise<void>>();
@@ -16,7 +15,7 @@ const pendingCacheWrites = new Set<Promise<void>>();
 async function fetchWithTimeout(
   url: string,
   options: RequestInit,
-  timeoutMs = 10000
+  timeoutMs = 10000,
 ): Promise<Response> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -33,7 +32,7 @@ async function fetchWithTimeout(
 
 async function tmdbRequest<T>(
   endpoint: string,
-  params: Record<string, string | number> = {}
+  params: Record<string, string | number> = {},
 ): Promise<T> {
   if (!ACCESS_TOKEN) {
     throw new Error("TMDB API Token is missing!");
@@ -61,7 +60,7 @@ async function tmdbRequest<T>(
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },
       },
-      10000
+      10000,
     );
 
     if (!response.ok) {
@@ -70,13 +69,12 @@ async function tmdbRequest<T>(
 
     const data = (await response.json()) as T;
 
-  
     if (requestCacheVersion === cacheVersion) {
       memoryCache.set(cacheKey, data);
 
       const writePromise = AsyncStorage.setItem(
         cacheKey,
-        JSON.stringify(data)
+        JSON.stringify(data),
       ).catch(() => {});
 
       pendingCacheWrites.add(writePromise);
@@ -86,17 +84,14 @@ async function tmdbRequest<T>(
     return data;
   })();
 
-  
   if (memoryCache.has(cacheKey)) {
     networkPromise.catch(() => {});
     return memoryCache.get(cacheKey) as T;
   }
 
- 
   try {
     const cachedData = await AsyncStorage.getItem(cacheKey);
 
-   
     if (requestCacheVersion !== cacheVersion) {
       return networkPromise;
     }
@@ -107,10 +102,7 @@ async function tmdbRequest<T>(
       networkPromise.catch(() => {});
       return parsed;
     }
-  } catch {
-   
-  }
-
+  } catch {}
 
   return networkPromise;
 }
@@ -169,7 +161,7 @@ export const getGenres = async () => {
 export const discoverMovies = (
   page = 1,
   genreId?: number | null,
-  minRating = 0
+  minRating = 0,
 ) => {
   const params: Record<string, string | number> = {
     page,
@@ -203,7 +195,7 @@ export const prefetchAppData = async () => {
     ];
 
     const uniqueMovies = Array.from(
-      new Map(combined.map((m) => [m.id, m])).values()
+      new Map(combined.map((m) => [m.id, m])).values(),
     ).slice(0, 8);
 
     uniqueMovies.forEach((movie) => {
@@ -211,7 +203,9 @@ export const prefetchAppData = async () => {
         Image.prefetch(`${IMAGE_URL}w342${movie.poster_path}`).catch(() => {});
       }
       if (movie.backdrop_path) {
-        Image.prefetch(`${IMAGE_URL}w780${movie.backdrop_path}`).catch(() => {});
+        Image.prefetch(`${IMAGE_URL}w780${movie.backdrop_path}`).catch(
+          () => {},
+        );
       }
     });
 
@@ -220,27 +214,23 @@ export const prefetchAppData = async () => {
         const details = await getMovieDetails(movie.id);
         const trailer =
           details.videos?.results?.find(
-            (v) => v.site === "YouTube" && v.type === "Trailer"
+            (v) => v.site === "YouTube" && v.type === "Trailer",
           ) || details.videos?.results?.find((v) => v.site === "YouTube");
 
         if (trailer?.key) {
           Image.prefetch(
-            `https://img.youtube.com/vi/${trailer.key}/hqdefault.jpg`
+            `https://img.youtube.com/vi/${trailer.key}/hqdefault.jpg`,
           ).catch(() => {});
         }
-      })
+      }),
     );
-  } catch {
-
-  }
+  } catch {}
 };
 
 export const clearTmdbCache = async (): Promise<number> => {
-
   cacheVersion += 1;
   memoryCache.clear();
 
-  
   await Promise.allSettled(Array.from(pendingCacheWrites));
 
   const keys = await AsyncStorage.getAllKeys();

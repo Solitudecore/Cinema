@@ -34,7 +34,11 @@ export default function WatchedMoviesScreen() {
 
   const isLandscape = width > height;
   const numColumns = isLandscape ? 2 : 1;
-  const sidePadding = Math.max(insets.left, insets.right, isLandscape ? 18 : 14);
+  const sidePadding = Math.max(
+    insets.left,
+    insets.right,
+    isLandscape ? 18 : 14,
+  );
   const gridGap = 10;
 
   const { items, isLoading, removeMovie } = useWatchlist();
@@ -72,20 +76,18 @@ export default function WatchedMoviesScreen() {
 
       setGenres(genreList);
       setReviews(filteredReviews);
-    } catch {
-      
-    }
+    } catch {}
   }, []);
 
   useFocusEffect(
     useCallback(() => {
       loadExtraData();
-    }, [loadExtraData])
+    }, [loadExtraData]),
   );
 
   const watchedItems = useMemo(
     () => items.filter((item) => item.status === "watched"),
-    [items]
+    [items],
   );
 
   const genreMap = useMemo(() => {
@@ -187,7 +189,6 @@ export default function WatchedMoviesScreen() {
         stickySectionHeadersEnabled={false}
         ListHeaderComponent={
           <View>
-            
             <View
               style={[
                 styles.pageHeader,
@@ -218,7 +219,6 @@ export default function WatchedMoviesScreen() {
               </View>
             </View>
 
-
             <View
               style={[
                 styles.statsCard,
@@ -244,9 +244,7 @@ export default function WatchedMoviesScreen() {
               <View style={styles.statBox}>
                 <View style={styles.ratingRow}>
                   <Ionicons name="star" size={14} color="#FBBF24" />
-                  <Text style={styles.statValue}>
-                    {averagePersonalRating}
-                  </Text>
+                  <Text style={styles.statValue}>{averagePersonalRating}</Text>
                 </View>
                 <Text style={styles.statLabel}>Your Avg</Text>
               </View>
@@ -266,13 +264,12 @@ export default function WatchedMoviesScreen() {
         )}
         renderItem={({ item: row }) => (
           <View
-            style={[
-              styles.rowContainer,
-              numColumns > 1 && { gap: gridGap },
-            ]}
+            style={[styles.rowContainer, numColumns > 1 && { gap: gridGap }]}
           >
             {row.map((item) => {
-              const matchScore = Math.round((item.movie.vote_average ?? 0) * 10);
+              const matchScore = Math.round(
+                (item.movie.vote_average ?? 0) * 10,
+              );
 
               return (
                 <Pressable
@@ -319,7 +316,7 @@ export default function WatchedMoviesScreen() {
                       <Text style={styles.miniBrandText}>C</Text>
                     </View>
 
-   <View style={styles.completedBar} />
+                    <View style={styles.completedBar} />
                   </View>
 
                   <View style={styles.movieInfo}>
@@ -374,9 +371,7 @@ export default function WatchedMoviesScreen() {
                 </Pressable>
               );
             })}
-            {numColumns > 1 && row.length === 1 && (
-              <View style={{ flex: 1 }} />
-            )}
+            {numColumns > 1 && row.length === 1 && <View style={{ flex: 1 }} />}
           </View>
         )}
         ListEmptyComponent={

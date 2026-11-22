@@ -78,7 +78,7 @@ export default function ForgotPasswordScreen() {
       } else {
         Alert.alert(
           "Error",
-          "Could not send reset link. Check your internet connection."
+          "Could not send reset link. Check your internet connection.",
         );
       }
     } finally {
@@ -93,10 +93,7 @@ export default function ForgotPasswordScreen() {
       </View>
 
       <Text
-        style={[
-          styles.title,
-          isLandscape && { fontSize: 24, marginBottom: 8 },
-        ]}
+        style={[styles.title, isLandscape && { fontSize: 24, marginBottom: 8 }]}
       >
         Forgot Password?
       </Text>
@@ -114,12 +111,7 @@ export default function ForgotPasswordScreen() {
   );
 
   const renderFormCard = () => (
-    <View
-      style={[
-        styles.card,
-        isLandscape && { flex: 1.2, padding: 16 },
-      ]}
-    >
+    <View style={[styles.card, isLandscape && { flex: 1.2, padding: 16 }]}>
       <View style={styles.sectionHeaderRow}>
         <View style={styles.sectionAccentBar} />
         <Text style={styles.label}>Email Address</Text>
@@ -133,12 +125,7 @@ export default function ForgotPasswordScreen() {
           errorMsg ? { borderColor: colors.danger || "#F87171" } : null,
         ]}
       >
-        <View
-          style={[
-            styles.iconBadge,
-            focused && styles.iconBadgeFocused,
-          ]}
-        >
+        <View style={[styles.iconBadge, focused && styles.iconBadgeFocused]}>
           <Ionicons
             name="mail-outline"
             size={17}
@@ -196,13 +183,11 @@ export default function ForgotPasswordScreen() {
   );
 
   const renderSentCard = () => (
-    <View style={[styles.card, styles.sentCard, isLandscape && { padding: 18 }]}>
+    <View
+      style={[styles.card, styles.sentCard, isLandscape && { padding: 18 }]}
+    >
       <View style={styles.successCircle}>
-        <Ionicons
-          name="checkmark-circle"
-          size={36}
-          color={NETFLIX_GREEN}
-        />
+        <Ionicons name="checkmark-circle" size={36} color={NETFLIX_GREEN} />
       </View>
 
       <Text style={styles.sentTitle}>Check Your Email</Text>

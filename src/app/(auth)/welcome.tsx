@@ -36,7 +36,7 @@ export default function WelcomeScreen() {
         const response = await getTrendingMovies();
         const movies = response.results ?? [];
         const firstWithImage = movies.find(
-          (m) => m.backdrop_path || m.poster_path
+          (m) => m.backdrop_path || m.poster_path,
         );
 
         if (isMounted && firstWithImage) {
@@ -47,9 +47,7 @@ export default function WelcomeScreen() {
             setFeaturedTitle(firstWithImage.title);
           }
         }
-      } catch {
-        
-      }
+      } catch {}
     };
 
     loadHeroBackdrop();
@@ -68,7 +66,6 @@ export default function WelcomeScreen() {
         style={styles.background}
         resizeMode="cover"
       >
-        
         <View style={styles.scrimBase} />
         <View style={styles.scrimTop} />
         <View style={styles.scrimBottom} />
@@ -78,13 +75,15 @@ export default function WelcomeScreen() {
             styles.overlayContent,
             {
               paddingTop: Math.max(insets.top + 10, isLandscape ? 16 : 48),
-              paddingBottom: Math.max(insets.bottom + 18, isLandscape ? 20 : 40),
+              paddingBottom: Math.max(
+                insets.bottom + 18,
+                isLandscape ? 20 : 40,
+              ),
               paddingLeft: Math.max(insets.left + 16, 24),
               paddingRight: Math.max(insets.right + 16, 24),
             },
           ]}
         >
-          
           <View style={styles.topBar}>
             <View style={styles.brandGroup}>
               <View style={styles.brandSquare}>
@@ -106,7 +105,6 @@ export default function WelcomeScreen() {
             </Pressable>
           </View>
 
-
           {featuredTitle && !isLandscape ? (
             <View style={styles.trendingPill}>
               <View style={styles.trendingDot} />
@@ -115,7 +113,6 @@ export default function WelcomeScreen() {
               </Text>
             </View>
           ) : null}
-
 
           <View
             style={[
@@ -179,8 +176,8 @@ export default function WelcomeScreen() {
                   },
                 ]}
               >
-                Discover trending films, build your personal watchlist, and
-                rate every movie you watch.
+                Discover trending films, build your personal watchlist, and rate
+                every movie you watch.
               </Text>
 
               <Pressable
@@ -198,7 +195,10 @@ export default function WelcomeScreen() {
               <View
                 style={[
                   styles.loginRow,
-                  isLandscape && { marginTop: 12, justifyContent: "flex-start" },
+                  isLandscape && {
+                    marginTop: 12,
+                    justifyContent: "flex-start",
+                  },
                 ]}
               >
                 <Text style={styles.loginPrompt}>

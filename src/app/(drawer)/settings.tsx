@@ -45,7 +45,6 @@ export default function SettingsScreen() {
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
-  
   const [passwordModalVisible, setPasswordModalVisible] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -60,9 +59,7 @@ export default function SettingsScreen() {
         if (saved === "true") {
           setNotificationsEnabled(true);
         }
-      } catch {
-        
-      }
+      } catch {}
     })();
   }, []);
 
@@ -86,7 +83,7 @@ export default function SettingsScreen() {
     await sendCineVerseNotification(
       "CineVerse Notifications Active 🎬",
       "You will now receive alerts for trending movies and watchlist reminders.",
-      true
+      true,
     );
   };
 
@@ -107,7 +104,7 @@ export default function SettingsScreen() {
     if (newPassword.length < 6) {
       Alert.alert(
         "Validation",
-        "New password must be at least 6 characters long."
+        "New password must be at least 6 characters long.",
       );
       return;
     }
@@ -120,7 +117,7 @@ export default function SettingsScreen() {
     if (currentPassword === newPassword) {
       Alert.alert(
         "Validation",
-        "New password must be different from your current password."
+        "New password must be different from your current password.",
       );
       return;
     }
@@ -135,7 +132,7 @@ export default function SettingsScreen() {
       setUpdatingPassword(true);
       const credential = EmailAuthProvider.credential(
         user.email,
-        currentPassword
+        currentPassword,
       );
       await reauthenticateWithCredential(user, credential);
       await updatePassword(user, newPassword);
@@ -178,17 +175,17 @@ export default function SettingsScreen() {
 
               Alert.alert(
                 "Cleared Successfully",
-                `Offline cache and search history cleared.\n${removedCount} cached TMDB entries removed.`
+                `Offline cache and search history cleared.\n${removedCount} cached TMDB entries removed.`,
               );
             } catch {
               Alert.alert(
                 "Error",
-                "Could not completely clear cache and history."
+                "Could not completely clear cache and history.",
               );
             }
           },
         },
-      ]
+      ],
     );
   };
 
@@ -340,11 +337,7 @@ export default function SettingsScreen() {
         >
           <View style={styles.rowLeft}>
             <View style={styles.iconBox}>
-              <Ionicons
-                name="trash-outline"
-                size={18}
-                color={NETFLIX_RED}
-              />
+              <Ionicons name="trash-outline" size={18} color={NETFLIX_RED} />
             </View>
             <View style={styles.rowTextWrap}>
               <Text style={[styles.rowTitle, { color: NETFLIX_RED }]}>
@@ -376,12 +369,8 @@ export default function SettingsScreen() {
       ]}
       showsVerticalScrollIndicator={false}
     >
-      
       <View
-        style={[
-          styles.pageHeader,
-          isLandscape && styles.pageHeaderLandscape,
-        ]}
+        style={[styles.pageHeader, isLandscape && styles.pageHeaderLandscape]}
       >
         <View>
           <View style={styles.prefBadge}>
@@ -417,7 +406,6 @@ export default function SettingsScreen() {
           {renderStorageSection()}
         </>
       )}
-
 
       <Modal
         visible={passwordModalVisible}
@@ -709,7 +697,7 @@ const createStyles = (colors: ThemeColors) =>
       fontSize: 12,
       marginTop: 2,
     },
-    
+
     modalBackdrop: {
       flex: 1,
       backgroundColor: "rgba(0, 0, 0, 0.76)",

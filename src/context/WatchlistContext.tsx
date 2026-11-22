@@ -34,7 +34,7 @@ interface WatchlistContextType {
 }
 
 export const WatchlistContext = createContext<WatchlistContextType | undefined>(
-  undefined
+  undefined,
 );
 
 const STORAGE_KEY = "cineverse_watchlist";
@@ -71,13 +71,11 @@ export function WatchlistProvider({ children }: Props) {
       try {
         await AsyncStorage.setItem(
           getStorageKey(uid),
-          JSON.stringify(updatedItems)
+          JSON.stringify(updatedItems),
         );
-      } catch {
-        
-      }
+      } catch {}
     },
-    []
+    [],
   );
 
   useEffect(() => {
@@ -122,7 +120,6 @@ export function WatchlistProvider({ children }: Props) {
           setItems(normalizedItems);
         }
       } catch {
-
       } finally {
         if (
           requestId === loadRequestRef.current &&
@@ -149,7 +146,7 @@ export function WatchlistProvider({ children }: Props) {
       const prevItems = itemsRef.current;
 
       const existingMovie = prevItems.find(
-        (item) => item.movie.id === movie.id
+        (item) => item.movie.id === movie.id,
       );
 
       let updatedItems: WatchlistItem[];
@@ -189,13 +186,11 @@ export function WatchlistProvider({ children }: Props) {
       try {
         await sendCineVerseNotification(
           "Added to My List 🎬",
-          `"${movie.title}" has been saved to My List.`
+          `"${movie.title}" has been saved to My List.`,
         );
-      } catch {
-  
-      }
+      } catch {}
     },
-    [saveWatchlist]
+    [saveWatchlist],
   );
 
   const removeMovie = useCallback(
@@ -205,7 +200,7 @@ export function WatchlistProvider({ children }: Props) {
       if (!uid) return;
 
       const updatedItems = itemsRef.current.filter(
-        (item) => item.movie.id !== movieId
+        (item) => item.movie.id !== movieId,
       );
 
       itemsRef.current = updatedItems;
@@ -213,13 +208,13 @@ export function WatchlistProvider({ children }: Props) {
 
       await saveWatchlist(uid, updatedItems);
     },
-    [saveWatchlist]
+    [saveWatchlist],
   );
 
   const toggleMyList = useCallback(
     async (movie: WatchlistMovieInput) => {
       const existing = itemsRef.current.find(
-        (item) => item.movie.id === movie.id
+        (item) => item.movie.id === movie.id,
       );
 
       if (existing && existing.status === "plan_to_watch") {
@@ -228,7 +223,7 @@ export function WatchlistProvider({ children }: Props) {
         await addMovie(movie);
       }
     },
-    [addMovie, removeMovie]
+    [addMovie, removeMovie],
   );
 
   const updateStatus = useCallback(
@@ -238,7 +233,7 @@ export function WatchlistProvider({ children }: Props) {
       if (!uid) return;
 
       const targetItem = itemsRef.current.find(
-        (item) => item.movie.id === movieId
+        (item) => item.movie.id === movieId,
       );
 
       if (!targetItem) return;
@@ -249,7 +244,7 @@ export function WatchlistProvider({ children }: Props) {
               ...item,
               status,
             }
-          : item
+          : item,
       );
 
       itemsRef.current = updatedItems;
@@ -261,31 +256,28 @@ export function WatchlistProvider({ children }: Props) {
         try {
           await sendCineVerseNotification(
             "Title Completed ✅",
-            `You marked "${targetItem.movie.title}" as watched!`
+            `You marked "${targetItem.movie.title}" as watched!`,
           );
-        } catch {
-    
-        }
+        } catch {}
       }
     },
-    [saveWatchlist]
+    [saveWatchlist],
   );
 
   const isInMyList = useCallback(
     (movieId: number) =>
       items.some(
-        (item) =>
-          item.movie.id === movieId && item.status === "plan_to_watch"
+        (item) => item.movie.id === movieId && item.status === "plan_to_watch",
       ),
-    [items]
+    [items],
   );
 
   const isWatched = useCallback(
     (movieId: number) =>
       items.some(
-        (item) => item.movie.id === movieId && item.status === "watched"
+        (item) => item.movie.id === movieId && item.status === "watched",
       ),
-    [items]
+    [items],
   );
 
   const contextValue = useMemo(
@@ -308,7 +300,7 @@ export function WatchlistProvider({ children }: Props) {
       toggleMyList,
       isInMyList,
       isWatched,
-    ]
+    ],
   );
 
   return (

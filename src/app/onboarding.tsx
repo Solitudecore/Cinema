@@ -122,10 +122,7 @@ export default function OnboardingScreen() {
 
   const renderShowcaseCard = () => (
     <View
-      style={[
-        styles.showcaseCard,
-        isLandscape && styles.showcaseCardLandscape,
-      ]}
+      style={[styles.showcaseCard, isLandscape && styles.showcaseCardLandscape]}
     >
       <View style={styles.showcaseTopRow}>
         <View style={styles.stepPill}>
@@ -181,7 +178,6 @@ export default function OnboardingScreen() {
         {activeSlide.description}
       </Text>
 
-
       <View
         style={[
           styles.indicators,
@@ -195,10 +191,7 @@ export default function OnboardingScreen() {
               key={index}
               hitSlop={8}
               onPress={() => setCurrentIndex(index)}
-              style={[
-                styles.indicator,
-                active && styles.activeIndicator,
-              ]}
+              style={[styles.indicator, active && styles.activeIndicator]}
             />
           );
         })}
@@ -238,7 +231,6 @@ export default function OnboardingScreen() {
       ]}
       showsVerticalScrollIndicator={false}
     >
-      
       <Animated.View
         style={[
           styles.topHeader,
@@ -265,7 +257,6 @@ export default function OnboardingScreen() {
           <Text style={styles.skipText}>Skip</Text>
         </Pressable>
       </Animated.View>
-
 
       <Animated.View
         style={[

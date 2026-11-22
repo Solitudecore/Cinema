@@ -19,11 +19,7 @@ import {
   StatusBar,
   useWindowDimensions,
 } from "react-native";
-import {
-  router,
-  useLocalSearchParams,
-  useFocusEffect,
-} from "expo-router";
+import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TrailerPlayer from "../../components/TrailerPlayer";
@@ -56,7 +52,11 @@ export default function MovieDetailsScreen() {
   const insets = useSafeAreaInsets();
   const isLandscape = width > height;
 
-  const sidePadding = Math.max(insets.left, insets.right, isLandscape ? 24 : 16);
+  const sidePadding = Math.max(
+    insets.left,
+    insets.right,
+    isLandscape ? 24 : 16,
+  );
   const contentWidth = width - sidePadding * 2;
 
   const inlineWidth = isLandscape
@@ -83,7 +83,7 @@ export default function MovieDetailsScreen() {
 
   const initialMovie = useMemo(
     () => (movieId ? getCachedMovieBasic(movieId) : null),
-    [movieId]
+    [movieId],
   );
 
   const [movie, setMovie] = useState<MovieDetails | null>(initialMovie);
@@ -175,7 +175,7 @@ export default function MovieDetailsScreen() {
         setIsPrebuffered(false);
         setPlayerFailed(false);
       };
-    }, [])
+    }, []),
   );
 
   useEffect(() => {
@@ -195,11 +195,7 @@ export default function MovieDetailsScreen() {
   if (error || !movie) {
     return (
       <View style={styles.center}>
-        <Ionicons
-          name="cloud-offline-outline"
-          size={40}
-          color={NETFLIX_RED}
-        />
+        <Ionicons name="cloud-offline-outline" size={40} color={NETFLIX_RED} />
         <Text style={styles.error}>{error || "Movie not found."}</Text>
         <Pressable style={styles.retryBtn} onPress={loadDetails}>
           <Text style={styles.retryText}>Retry</Text>
@@ -210,7 +206,7 @@ export default function MovieDetailsScreen() {
 
   const trailer =
     movie.videos?.results?.find(
-      (video) => video.site === "YouTube" && video.type === "Trailer"
+      (video) => video.site === "YouTube" && video.type === "Trailer",
     ) || movie.videos?.results?.find((video) => video.site === "YouTube");
 
   const thumbnailUrl = trailer
@@ -232,7 +228,7 @@ export default function MovieDetailsScreen() {
     const url = trailer
       ? `https://www.youtube.com/watch?v=${trailer.key}`
       : `https://www.youtube.com/results?search_query=${encodeURIComponent(
-          `${movie.title} official trailer`
+          `${movie.title} official trailer`,
         )}`;
 
     Linking.openURL(url).catch(() => {});
@@ -277,7 +273,6 @@ export default function MovieDetailsScreen() {
         paddingBottom: Math.max(insets.bottom + 16, 32),
       }}
     >
-      
       <View style={styles.backdropWrapper}>
         {movie.backdrop_path || movie.poster_path ? (
           <Image
@@ -286,10 +281,7 @@ export default function MovieDetailsScreen() {
                 movie.backdrop_path || movie.poster_path
               }`,
             }}
-            style={[
-              styles.backdrop,
-              isLandscape && { height: 200 },
-            ]}
+            style={[styles.backdrop, isLandscape && { height: 200 }]}
             resizeMode="cover"
           />
         ) : (
@@ -304,7 +296,6 @@ export default function MovieDetailsScreen() {
 
         <View style={styles.scrimTop} />
         <View style={styles.scrimBottom} />
-
 
         <Pressable
           style={[
@@ -348,13 +339,7 @@ export default function MovieDetailsScreen() {
           },
         ]}
       >
-        
-        <View
-          style={[
-            styles.topHeaderRow,
-            isLandscape && { marginTop: -56 },
-          ]}
-        >
+        <View style={[styles.topHeaderRow, isLandscape && { marginTop: -56 }]}>
           {movie.poster_path ? (
             <View style={styles.posterFrame}>
               <Image
@@ -417,18 +402,14 @@ export default function MovieDetailsScreen() {
           </View>
         </View>
 
-    
-       <View
+        <View
           style={[
             styles.actionsContainer,
             isLandscape && styles.actionsContainerLandscape,
           ]}
         >
           <Pressable
-            style={[
-              styles.netflixPlayBtn,
-              isLandscape && { flex: 1.2 },
-            ]}
+            style={[styles.netflixPlayBtn, isLandscape && { flex: 1.2 }]}
             onPress={handlePlayPress}
           >
             <Ionicons name="play" size={20} color="#0B0B13" />
@@ -437,12 +418,7 @@ export default function MovieDetailsScreen() {
             </Text>
           </Pressable>
 
-          <View
-            style={[
-              styles.secondaryRow,
-              isLandscape && { flex: 1.8 },
-            ]}
-          >
+          <View style={[styles.secondaryRow, isLandscape && { flex: 1.8 }]}>
             <Pressable
               style={[
                 styles.netflixSecondaryBtn,
@@ -458,11 +434,7 @@ export default function MovieDetailsScreen() {
             >
               <Ionicons
                 name={
-                  isInWatchlist
-                    ? "checkmark"
-                    : isWatched
-                      ? "refresh"
-                      : "add"
+                  isInWatchlist ? "checkmark" : isWatched ? "refresh" : "add"
                 }
                 size={20}
                 color="#FFFFFF"
@@ -491,8 +463,7 @@ export default function MovieDetailsScreen() {
           </View>
         </View>
 
-      
-       {movie.overview ? (
+        {movie.overview ? (
           <View style={styles.overviewBlock}>
             <Text style={styles.overview}>{movie.overview}</Text>
             {topCastNames ? (
@@ -504,7 +475,6 @@ export default function MovieDetailsScreen() {
           </View>
         ) : null}
 
-
         {movie.genres && movie.genres.length > 0 && (
           <View style={styles.genres}>
             {movie.genres.map((genre) => (
@@ -514,7 +484,6 @@ export default function MovieDetailsScreen() {
             ))}
           </View>
         )}
-
 
         {trailer && isFocused && (
           <View
@@ -560,11 +529,7 @@ export default function MovieDetailsScreen() {
             >
               {playerFailed ? (
                 <View style={styles.playerFallback}>
-                  <Ionicons
-                    name="logo-youtube"
-                    size={36}
-                    color={NETFLIX_RED}
-                  />
+                  <Ionicons name="logo-youtube" size={36} color={NETFLIX_RED} />
                   <Text style={styles.fallbackText}>
                     This trailer cannot play embedded on this device.
                   </Text>
@@ -661,7 +626,6 @@ export default function MovieDetailsScreen() {
           </View>
         )}
 
-
         {movie.credits?.cast && movie.credits.cast.length > 0 && (
           <View style={styles.castSection}>
             <View style={styles.sectionTitleGroup}>
@@ -670,18 +634,12 @@ export default function MovieDetailsScreen() {
             </View>
 
             <View
-              style={[
-                styles.castList,
-                isLandscape && styles.castGridLandscape,
-              ]}
+              style={[styles.castList, isLandscape && styles.castGridLandscape]}
             >
               {movie.credits.cast.slice(0, 10).map((actor) => (
                 <View
                   key={actor.id}
-                  style={[
-                    styles.castCard,
-                    isLandscape && { width: "48.8%" },
-                  ]}
+                  style={[styles.castCard, isLandscape && { width: "48.8%" }]}
                 >
                   <View style={styles.castAvatar}>
                     <Text style={styles.castAvatarText}>
@@ -704,7 +662,6 @@ export default function MovieDetailsScreen() {
           </View>
         )}
       </View>
-
 
       {trailer && (
         <Modal

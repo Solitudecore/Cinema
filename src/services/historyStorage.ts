@@ -45,9 +45,7 @@ export const addRecentlyViewed = async (movie: MovieLike): Promise<void> => {
     const filtered = current.filter((item) => item.id !== normalized.id);
     const updated = [normalized, ...filtered].slice(0, 10);
     await AsyncStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(updated));
-  } catch {
-  
-  }
+  } catch {}
 };
 
 export const getRecentSearches = async (): Promise<string[]> => {
@@ -66,7 +64,7 @@ export const addRecentSearch = async (query: string): Promise<string[]> => {
   try {
     const current = await getRecentSearches();
     const filtered = current.filter(
-      (item) => item.toLowerCase() !== clean.toLowerCase()
+      (item) => item.toLowerCase() !== clean.toLowerCase(),
     );
     const updated = [clean, ...filtered].slice(0, 6);
     await AsyncStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(updated));
@@ -79,14 +77,9 @@ export const addRecentSearch = async (query: string): Promise<string[]> => {
 export const clearRecentSearches = async (): Promise<void> => {
   try {
     await AsyncStorage.removeItem(RECENT_SEARCHES_KEY);
-  } catch {
-
-  }
+  } catch {}
 };
 
 export const clearRecentHistory = async (): Promise<void> => {
-  await AsyncStorage.multiRemove([
-    RECENTLY_VIEWED_KEY,
-    RECENT_SEARCHES_KEY,
-  ]);
+  await AsyncStorage.multiRemove([RECENTLY_VIEWED_KEY, RECENT_SEARCHES_KEY]);
 };

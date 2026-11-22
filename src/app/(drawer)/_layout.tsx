@@ -56,7 +56,7 @@ function CustomDrawerContent({ navigation }: CustomDrawerProps) {
   const { items } = useWatchlist();
 
   const [avatarUri, setAvatarUri] = useState<string | null>(
-    auth.currentUser?.photoURL ?? null
+    auth.currentUser?.photoURL ?? null,
   );
   const [profileName, setProfileName] = useState<string | null>(null);
   const [imageError, setImageError] = useState(false);
@@ -160,23 +160,25 @@ function CustomDrawerContent({ navigation }: CustomDrawerProps) {
   };
 
   const handleExit = () => {
-    Alert.alert("Sign Out", "Do you want to sign out of your CineVerse account?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Sign Out",
-        style: "destructive",
-        onPress: async () => {
-          navigation.closeDrawer();
-          try {
-            await signOut(auth);
-          } catch {
-       
-          }
-          await AsyncStorage.removeItem("is_logged_in");
-          router.replace("/(auth)/welcome");
+    Alert.alert(
+      "Sign Out",
+      "Do you want to sign out of your CineVerse account?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Sign Out",
+          style: "destructive",
+          onPress: async () => {
+            navigation.closeDrawer();
+            try {
+              await signOut(auth);
+            } catch {}
+            await AsyncStorage.removeItem("is_logged_in");
+            router.replace("/(auth)/welcome");
+          },
         },
-      },
-    ]);
+      ],
+    );
   };
 
   const renderMenuItem = (item: MenuItemConfig) => (
@@ -195,10 +197,7 @@ function CustomDrawerContent({ navigation }: CustomDrawerProps) {
     >
       {item.isActive && (
         <View
-          style={[
-            styles.activeIndicator,
-            isLandscape && { top: 6, bottom: 6 },
-          ]}
+          style={[styles.activeIndicator, isLandscape && { top: 6, bottom: 6 }]}
         />
       )}
 
@@ -268,7 +267,6 @@ function CustomDrawerContent({ navigation }: CustomDrawerProps) {
 
   const renderHeaderAndProfile = () => (
     <>
-    
       <View
         style={[
           styles.brandHeader,
@@ -282,10 +280,7 @@ function CustomDrawerContent({ navigation }: CustomDrawerProps) {
           ]}
         >
           <Text
-            style={[
-              styles.brandLogoLetter,
-              isLandscape && { fontSize: 16 },
-            ]}
+            style={[styles.brandLogoLetter, isLandscape && { fontSize: 16 }]}
           >
             C
           </Text>
@@ -320,7 +315,6 @@ function CustomDrawerContent({ navigation }: CustomDrawerProps) {
         </Pressable>
       </View>
 
-
       <Pressable
         style={[
           styles.profileCard,
@@ -350,10 +344,7 @@ function CustomDrawerContent({ navigation }: CustomDrawerProps) {
               ]}
             >
               <Text
-                style={[
-                  styles.avatarText,
-                  isLandscape && { fontSize: 15 },
-                ]}
+                style={[styles.avatarText, isLandscape && { fontSize: 15 }]}
               >
                 {avatarLetter}
               </Text>
@@ -388,12 +379,7 @@ function CustomDrawerContent({ navigation }: CustomDrawerProps) {
         </View>
 
         {!isLandscape && (
-          <View
-            style={[
-              styles.statsRow,
-              { borderTopColor: colors.border },
-            ]}
-          >
+          <View style={[styles.statsRow, { borderTopColor: colors.border }]}>
             <Pressable
               style={styles.statBox}
               onPress={() => handleNavigate("/(drawer)/(tabs)/watchlist")}
@@ -440,10 +426,7 @@ function CustomDrawerContent({ navigation }: CustomDrawerProps) {
       </View>
 
       <View
-        style={[
-          styles.sectionHeaderRow,
-          { marginTop: isLandscape ? 12 : 18 },
-        ]}
+        style={[styles.sectionHeaderRow, { marginTop: isLandscape ? 12 : 18 }]}
       >
         <View style={styles.sectionAccent} />
         <Text style={[styles.sectionLabel, { color: colors.muted }]}>
@@ -470,12 +453,7 @@ function CustomDrawerContent({ navigation }: CustomDrawerProps) {
         size={isLandscape ? 17 : 19}
         color={NETFLIX_RED}
       />
-      <Text
-        style={[
-          styles.exitText,
-          isLandscape && { fontSize: 13 },
-        ]}
-      >
+      <Text style={[styles.exitText, isLandscape && { fontSize: 13 }]}>
         Sign Out
       </Text>
     </Pressable>

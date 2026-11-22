@@ -61,8 +61,9 @@ interface ThemeContextType {
   toggleTheme: () => Promise<void>;
 }
 
-export const ThemeContext =
-  createContext<ThemeContextType | undefined>(undefined);
+export const ThemeContext = createContext<ThemeContextType | undefined>(
+  undefined,
+);
 
 const THEME_KEY = "cineverse_theme";
 
@@ -85,7 +86,6 @@ export function ThemeProvider({ children }: Props) {
           setThemeState(savedTheme);
         }
       } catch {
-        
       } finally {
         if (isMounted) {
           setIsThemeLoading(false);
@@ -115,7 +115,7 @@ export function ThemeProvider({ children }: Props) {
 
   const colors = useMemo(
     () => (theme === "dark" ? DARK_COLORS : LIGHT_COLORS),
-    [theme]
+    [theme],
   );
 
   const contextValue = useMemo(
@@ -126,7 +126,7 @@ export function ThemeProvider({ children }: Props) {
       setTheme,
       toggleTheme,
     }),
-    [theme, colors, isThemeLoading, setTheme, toggleTheme]
+    [theme, colors, isThemeLoading, setTheme, toggleTheme],
   );
 
   return (

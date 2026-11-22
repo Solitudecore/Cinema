@@ -56,11 +56,9 @@ export default function TrailerPlayer({
           func,
           args: [],
         }),
-        "*"
+        "*",
       );
-    } catch {
-  
-    }
+    } catch {}
   };
 
   useEffect(() => {
@@ -112,9 +110,7 @@ export default function TrailerPlayer({
         } else if (data.event === "onError") {
           callbacksRef.current.onError?.();
         }
-      } catch {
-    
-      }
+      } catch {}
     };
 
     window.addEventListener("message", handleMessage);
@@ -150,11 +146,9 @@ export default function TrailerPlayer({
     try {
       iframeRef.current?.contentWindow?.postMessage(
         JSON.stringify({ event: "listening" }),
-        "*"
+        "*",
       );
-    } catch {
-      
-    }
+    } catch {}
 
     if (!isReadyRef.current) {
       isReadyRef.current = true;

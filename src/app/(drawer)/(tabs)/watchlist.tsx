@@ -35,7 +35,11 @@ export default function WatchlistScreen() {
 
   const isLandscape = width > height;
   const numColumns = isLandscape ? 2 : 1;
-  const sidePadding = Math.max(insets.left, insets.right, isLandscape ? 18 : 16);
+  const sidePadding = Math.max(
+    insets.left,
+    insets.right,
+    isLandscape ? 18 : 16,
+  );
   const gridGap = 12;
 
   const cardWidth = useMemo(() => {
@@ -94,12 +98,8 @@ export default function WatchlistScreen() {
         },
       ]}
     >
-      
       <View
-        style={[
-          styles.headerBlock,
-          isLandscape && styles.headerBlockLandscape,
-        ]}
+        style={[styles.headerBlock, isLandscape && styles.headerBlockLandscape]}
       >
         <View style={styles.titleGroup}>
           <View style={styles.myListBadge}>
@@ -156,18 +156,14 @@ export default function WatchlistScreen() {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <View style={styles.emptyIconCircle}>
-              <Ionicons
-                name="bookmark-outline"
-                size={34}
-                color="#E50914"
-              />
+              <Ionicons name="bookmark-outline" size={34} color="#E50914" />
             </View>
 
             <Text style={styles.emptyTitle}>Your List is Empty</Text>
 
             <Text style={styles.emptyDescription}>
-              Save movies you want to watch later and build your personal
-              cinema queue.
+              Save movies you want to watch later and build your personal cinema
+              queue.
             </Text>
 
             <Pressable
@@ -293,7 +289,6 @@ export default function WatchlistScreen() {
         }}
       />
 
-
       <Modal
         visible={movieToRemove !== null}
         transparent
@@ -315,9 +310,7 @@ export default function WatchlistScreen() {
             <Text style={styles.modalTitle}>Remove from My List?</Text>
             <Text style={styles.modalMessage}>
               Remove{" "}
-              <Text style={styles.modalMovieName}>
-                {movieToRemove?.title}
-              </Text>{" "}
+              <Text style={styles.modalMovieName}>{movieToRemove?.title}</Text>{" "}
               from your watchlist?
             </Text>
 
@@ -329,10 +322,7 @@ export default function WatchlistScreen() {
                 <Text style={styles.modalCancelText}>Cancel</Text>
               </Pressable>
 
-              <Pressable
-                style={styles.modalConfirmBtn}
-                onPress={confirmRemove}
-              >
+              <Pressable style={styles.modalConfirmBtn} onPress={confirmRemove}>
                 <Text style={styles.modalConfirmText}>Remove</Text>
               </Pressable>
             </View>

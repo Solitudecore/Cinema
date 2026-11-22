@@ -1,4 +1,3 @@
- 
 export const DarkColors = {
   background: "#090910",
   surface: "#13131E",

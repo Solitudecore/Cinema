@@ -1,11 +1,5 @@
 import React, { useContext, useMemo } from "react";
-import {
-  View,
-  Text,
-  Image,
-  Pressable,
-  StyleSheet,
-} from "react-native";
+import { View, Text, Image, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Movie } from "../types/movie";
 import { IMAGE_URL } from "../services/tmdb";
@@ -62,19 +56,15 @@ const MovieCard = React.memo(function MovieCard({
             <Text style={styles.placeholderText}>No Poster</Text>
           </View>
         )}
-        
+
         <View style={styles.brandTag}>
           <Text style={styles.brandTagText}>C</Text>
         </View>
 
-
         {watchlist ? (
           <Pressable
             hitSlop={6}
-            style={[
-              styles.quickListBtn,
-              inMyList && styles.quickListBtnActive,
-            ]}
+            style={[styles.quickListBtn, inMyList && styles.quickListBtnActive]}
             onPress={(e) => {
               e.stopPropagation();
               watchlist.toggleMyList(movie);
@@ -87,7 +77,7 @@ const MovieCard = React.memo(function MovieCard({
             />
           </Pressable>
         ) : null}
-        
+
         {watched && !inMyList ? <View style={styles.watchedBottomBar} /> : null}
       </View>
 

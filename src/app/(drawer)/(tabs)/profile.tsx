@@ -81,7 +81,7 @@ export default function ProfileScreen() {
 
       const sortedReviews = [...userReviews].sort(
         (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
       );
 
       setProfile(mergedProfile);
@@ -90,7 +90,7 @@ export default function ProfileScreen() {
       setReviews(sortedReviews);
 
       const uniqueMovieIds = Array.from(
-        new Set(sortedReviews.slice(0, 5).map((r) => String(r.movieId)))
+        new Set(sortedReviews.slice(0, 5).map((r) => String(r.movieId))),
       );
 
       if (uniqueMovieIds.length > 0) {
@@ -106,7 +106,7 @@ export default function ProfileScreen() {
             } catch {
               return null;
             }
-          })
+          }),
         );
 
         const extraMap: Record<
@@ -130,24 +130,24 @@ export default function ProfileScreen() {
   useFocusEffect(
     useCallback(() => {
       loadProfile();
-    }, [loadProfile])
+    }, [loadProfile]),
   );
 
   const watchedMovies = useMemo(
     () => items.filter((item) => item.status === "watched"),
-    [items]
+    [items],
   );
 
   const plannedMovies = useMemo(
     () => items.filter((item) => item.status === "plan_to_watch"),
-    [items]
+    [items],
   );
 
   const averageRating = useMemo(() => {
     if (reviews.length === 0) return "0.0";
     const sum = reviews.reduce(
       (total, review) => total + Number(review.rating || 0),
-      0
+      0,
     );
     return (sum / reviews.length).toFixed(1);
   }, [reviews]);
@@ -197,7 +197,7 @@ export default function ProfileScreen() {
       if (!permission.granted) {
         Alert.alert(
           "Permission Required",
-          "Please allow access to your photo library."
+          "Please allow access to your photo library.",
         );
         return;
       }
@@ -241,9 +241,7 @@ export default function ProfileScreen() {
       if (auth.currentUser && auth.currentUser.displayName !== cleanName) {
         try {
           await updateProfile(auth.currentUser, { displayName: cleanName });
-        } catch {
-     
-        }
+        } catch {}
       }
 
       await saveUserProfile(updatedProfile);
@@ -272,9 +270,7 @@ export default function ProfileScreen() {
         onPress: async () => {
           try {
             await signOut(auth);
-          } catch {
-            
-          }
+          } catch {}
           await AsyncStorage.removeItem("is_logged_in");
           router.replace("/(auth)/welcome");
         },
@@ -506,11 +502,7 @@ export default function ProfileScreen() {
           onPress={() => router.push("/(drawer)/settings")}
         >
           <View style={styles.menuIconWrap}>
-            <Ionicons
-              name="settings-outline"
-              size={17}
-              color={NETFLIX_RED}
-            />
+            <Ionicons name="settings-outline" size={17} color={NETFLIX_RED} />
           </View>
           <Text style={styles.menuLabel}>Appearance & Preferences</Text>
           <Ionicons name="chevron-forward" size={16} color={colors.muted} />
@@ -528,11 +520,7 @@ export default function ProfileScreen() {
               { backgroundColor: `${NETFLIX_RED}18` },
             ]}
           >
-            <Ionicons
-              name="log-out-outline"
-              size={17}
-              color={NETFLIX_RED}
-            />
+            <Ionicons name="log-out-outline" size={17} color={NETFLIX_RED} />
           </View>
           <Text style={[styles.menuLabel, { color: NETFLIX_RED }]}>
             Sign Out
@@ -563,8 +551,7 @@ export default function ProfileScreen() {
       >
         {isLandscape ? (
           <View style={styles.landscapeContainer}>
-         
-           <View style={styles.landscapeLeftCol}>
+            <View style={styles.landscapeLeftCol}>
               <View style={styles.landscapeProfileCard}>
                 <View style={styles.landscapeProfileTop}>
                   <Pressable
@@ -646,9 +633,7 @@ export default function ProfileScreen() {
 
                     <Pressable
                       style={styles.statBoxLandscape}
-                      onPress={() =>
-                        router.push("/(drawer)/(tabs)/watchlist")
-                      }
+                      onPress={() => router.push("/(drawer)/(tabs)/watchlist")}
                     >
                       <Text style={styles.statValueSmall}>
                         {plannedMovies.length}
@@ -687,13 +672,12 @@ export default function ProfileScreen() {
               {renderEditForm()}
             </View>
 
-   <View style={styles.landscapeRightCol}>
+            <View style={styles.landscapeRightCol}>
               {renderReviewsAndAccount()}
             </View>
           </View>
         ) : (
           <>
-          
             <View style={styles.topBar}>
               <View style={styles.brandRow}>
                 <View style={styles.brandSquare}>
@@ -704,10 +688,7 @@ export default function ProfileScreen() {
 
               <View style={styles.topActions}>
                 <Pressable
-                  style={[
-                    styles.iconPill,
-                    isEditing && styles.iconPillActive,
-                  ]}
+                  style={[styles.iconPill, isEditing && styles.iconPillActive]}
                   onPress={() => setIsEditing((prev) => !prev)}
                 >
                   <Ionicons
@@ -727,8 +708,7 @@ export default function ProfileScreen() {
               </View>
             </View>
 
-         
-           <View style={styles.identitySection}>
+            <View style={styles.identitySection}>
               <Pressable style={styles.netflixAvatarBox} onPress={pickImage}>
                 {profile.avatarUri ? (
                   <Image
@@ -764,7 +744,6 @@ export default function ProfileScreen() {
 
             {renderEditForm()}
 
-       
             <View style={styles.statsBar}>
               <Pressable
                 style={styles.statSlot}
@@ -873,7 +852,7 @@ const createStyles = (colors: ThemeColors) =>
       backgroundColor: NETFLIX_RED,
       borderColor: NETFLIX_RED,
     },
-    
+
     landscapeContainer: {
       flexDirection: "row",
       alignItems: "flex-start",
@@ -999,7 +978,7 @@ const createStyles = (colors: ThemeColors) =>
       fontWeight: "700",
       marginTop: 2,
     },
-    
+
     identitySection: {
       alignItems: "center",
       marginBottom: 20,
@@ -1077,7 +1056,7 @@ const createStyles = (colors: ThemeColors) =>
       fontSize: 12,
       fontWeight: "600",
     },
-    
+
     editCard: {
       backgroundColor: colors.surface,
       borderRadius: 16,
@@ -1148,7 +1127,7 @@ const createStyles = (colors: ThemeColors) =>
       fontWeight: "800",
       fontSize: 13,
     },
-    
+
     statsBar: {
       flexDirection: "row",
       alignItems: "center",
@@ -1186,7 +1165,7 @@ const createStyles = (colors: ThemeColors) =>
       fontWeight: "700",
       marginTop: 3,
     },
-    
+
     sectionHeader: {
       flexDirection: "row",
       justifyContent: "space-between",

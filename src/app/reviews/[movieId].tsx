@@ -19,10 +19,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { onAuthStateChanged, type User } from "firebase/auth";
 import { auth } from "../../services/firebase";
 import { Review } from "../../types/review";
-import {
-  getReviews,
-  saveReviews,
-} from "../../services/reviewStorage";
+import { getReviews, saveReviews } from "../../services/reviewStorage";
 import {
   getCachedMovieBasic,
   getMovieDetails,
@@ -49,7 +46,11 @@ export default function ReviewsScreen() {
   const insets = useSafeAreaInsets();
   const isLandscape = width > height;
 
-  const sidePadding = Math.max(insets.left, insets.right, isLandscape ? 24 : 16);
+  const sidePadding = Math.max(
+    insets.left,
+    insets.right,
+    isLandscape ? 24 : 16,
+  );
   const topPadding = isLandscape
     ? Math.max(insets.top + 8, 14)
     : Math.max(insets.top + 10, 42);
@@ -72,7 +73,7 @@ export default function ReviewsScreen() {
       !Number.isNaN(numericMovieId) && numericMovieId > 0
         ? getCachedMovieBasic(numericMovieId)
         : null,
-    [numericMovieId]
+    [numericMovieId],
   );
 
   const [movieMeta, setMovieMeta] = useState<{
@@ -90,7 +91,7 @@ export default function ReviewsScreen() {
             : "",
           voteAverage: initialBasicMovie.vote_average ?? 0,
         }
-      : null
+      : null,
   );
 
   const [currentUser, setCurrentUser] = useState<User | null>(auth.currentUser);
@@ -137,9 +138,7 @@ export default function ReviewsScreen() {
             voteAverage: details.vote_average ?? 0,
           });
         }
-      } catch {
-   
-      }
+      } catch {}
     })();
 
     return () => {
@@ -235,7 +234,7 @@ export default function ReviewsScreen() {
                 content: content.trim(),
                 rating,
               }
-            : review
+            : review,
         );
       } else {
         const newReview: Review = {
@@ -295,8 +294,7 @@ export default function ReviewsScreen() {
             try {
               const latestAllReviews = await getReviews(movieId);
               const updatedReviews = latestAllReviews.filter(
-                (review) =>
-                  !(review.id === id && review.userId === currentUid)
+                (review) => !(review.id === id && review.userId === currentUid),
               );
 
               await saveReviews(movieId, updatedReviews);
@@ -311,7 +309,7 @@ export default function ReviewsScreen() {
             }
           },
         },
-      ]
+      ],
     );
   };
 
@@ -357,9 +355,7 @@ export default function ReviewsScreen() {
                   {"★".repeat(item.rating)}
                   {"☆".repeat(5 - item.rating)}
                 </Text>
-                <Text style={styles.cardMatchText}>
-                  {itemRatingInfo.match}
-                </Text>
+                <Text style={styles.cardMatchText}>{itemRatingInfo.match}</Text>
               </View>
             </View>
           </View>
@@ -372,10 +368,7 @@ export default function ReviewsScreen() {
         <Text style={styles.reviewContent}>{item.content}</Text>
 
         <View style={styles.actions}>
-          <Pressable
-            style={styles.editButton}
-            onPress={() => handleEdit(item)}
-          >
+          <Pressable style={styles.editButton} onPress={() => handleEdit(item)}>
             <Ionicons name="create-outline" size={14} color={colors.text} />
             <Text style={styles.editText}>Edit</Text>
           </Pressable>
@@ -402,9 +395,7 @@ export default function ReviewsScreen() {
         data={myReviews}
         keyExtractor={(item) => item.id}
         numColumns={numColumns}
-        columnWrapperStyle={
-          numColumns > 1 ? { gap: gridGap } : undefined
-        }
+        columnWrapperStyle={numColumns > 1 ? { gap: gridGap } : undefined}
         renderItem={renderReview}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
@@ -418,12 +409,8 @@ export default function ReviewsScreen() {
         ]}
         ListHeaderComponent={
           <View>
-            
             <View
-              style={[
-                styles.topBar,
-                isLandscape && styles.topBarLandscape,
-              ]}
+              style={[styles.topBar, isLandscape && styles.topBarLandscape]}
             >
               <Pressable
                 style={[
@@ -439,9 +426,7 @@ export default function ReviewsScreen() {
                 <View style={styles.criticBadge}>
                   <Text style={styles.criticBadgeText}>CRITIC REVIEWS</Text>
                 </View>
-                <Text
-                  style={[styles.title, isLandscape && { fontSize: 20 }]}
-                >
+                <Text style={[styles.title, isLandscape && { fontSize: 20 }]}>
                   Rate & Review
                 </Text>
               </View>
@@ -453,7 +438,6 @@ export default function ReviewsScreen() {
                 </Text>
               </View>
             </View>
-
 
             {movieMeta && (
               <View
@@ -511,7 +495,6 @@ export default function ReviewsScreen() {
               </View>
             )}
 
-
             <View
               style={[
                 styles.form,
@@ -521,10 +504,7 @@ export default function ReviewsScreen() {
               <View style={styles.sectionHeaderRow}>
                 <View style={styles.sectionAccentBar} />
                 <Text
-                  style={[
-                    styles.formTitle,
-                    isLandscape && { fontSize: 15 },
-                  ]}
+                  style={[styles.formTitle, isLandscape && { fontSize: 15 }]}
                 >
                   {editingId ? "Edit Your Review" : "Write a Review"}
                 </Text>
@@ -536,11 +516,8 @@ export default function ReviewsScreen() {
                 </View>
               </View>
 
-  <View
-                style={[
-                  styles.starsRow,
-                  isLandscape && { marginBottom: 10 },
-                ]}
+              <View
+                style={[styles.starsRow, isLandscape && { marginBottom: 10 }]}
               >
                 {[1, 2, 3, 4, 5].map((star) => {
                   const active = star <= rating;
@@ -560,10 +537,7 @@ export default function ReviewsScreen() {
                         color={active ? "#FBBF24" : colors.muted}
                       />
                       <Text
-                        style={[
-                          styles.starNum,
-                          active && styles.starNumActive,
-                        ]}
+                        style={[styles.starNum, active && styles.starNumActive]}
                       >
                         {star}
                       </Text>
@@ -573,10 +547,7 @@ export default function ReviewsScreen() {
               </View>
 
               <TextInput
-                style={[
-                  styles.input,
-                  isLandscape && { minHeight: 76 },
-                ]}
+                style={[styles.input, isLandscape && { minHeight: 76 }]}
                 placeholder="Share your thoughts — story, acting, soundtrack..."
                 placeholderTextColor={colors.muted}
                 value={content}
@@ -597,10 +568,7 @@ export default function ReviewsScreen() {
               >
                 {editingId && (
                   <Pressable
-                    style={[
-                      styles.cancelButton,
-                      isLandscape && { height: 42 },
-                    ]}
+                    style={[styles.cancelButton, isLandscape && { height: 42 }]}
                     onPress={cancelEdit}
                     disabled={saving}
                   >
@@ -635,19 +603,14 @@ export default function ReviewsScreen() {
               </View>
             </View>
 
-    <View
+            <View
               style={[
                 styles.listHeaderRow,
                 isLandscape && { marginBottom: 10 },
               ]}
             >
               <View style={styles.sectionAccentBar} />
-              <Text
-                style={[
-                  styles.listTitle,
-                  isLandscape && { fontSize: 16 },
-                ]}
-              >
+              <Text style={[styles.listTitle, isLandscape && { fontSize: 16 }]}>
                 Your Reviews ({myReviews.length})
               </Text>
             </View>
@@ -749,7 +712,7 @@ const createStyles = (colors: ThemeColors) =>
       fontSize: 11,
       fontWeight: "800",
     },
-    
+
     movieContextCard: {
       flexDirection: "row",
       alignItems: "center",
@@ -830,7 +793,7 @@ const createStyles = (colors: ThemeColors) =>
       fontSize: 8.5,
       fontWeight: "800",
     },
-    
+
     form: {
       backgroundColor: colors.surface,
       padding: 16,
@@ -956,7 +919,7 @@ const createStyles = (colors: ThemeColors) =>
       fontWeight: "700",
       fontSize: 14,
     },
-    
+
     listHeaderRow: {
       flexDirection: "row",
       alignItems: "center",

@@ -39,7 +39,7 @@ export default function LoginScreen() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [focusedField, setFocusedField] = useState<"email" | "password" | null>(
-    null
+    null,
   );
   const [loading, setLoading] = useState(false);
 
@@ -55,9 +55,7 @@ export default function LoginScreen() {
           const path = featured.backdrop_path || featured.poster_path;
           setBackdropUrl(`${IMAGE_URL}w1280${path}`);
         }
-      } catch {
-        // Şəbəkə olmasa standart fon qalır
-      }
+      } catch {}
     };
 
     loadBackdrop();
@@ -81,7 +79,7 @@ export default function LoginScreen() {
       const userCredential = await signInWithEmailAndPassword(
         auth,
         cleanEmail,
-        password
+        password,
       );
 
       const user = userCredential.user;
@@ -117,12 +115,7 @@ export default function LoginScreen() {
         <Text style={styles.logoLetter}>C</Text>
       </View>
 
-      <Text
-        style={[
-          styles.logoText,
-          isLandscape && { textAlign: "left" },
-        ]}
-      >
+      <Text style={[styles.logoText, isLandscape && { textAlign: "left" }]}>
         CINE<Text style={{ color: NETFLIX_RED }}>VERSE</Text>
       </Text>
 
@@ -152,7 +145,9 @@ export default function LoginScreen() {
   );
 
   const renderFormSection = () => (
-    <View style={isLandscape ? styles.landscapeRightCol : styles.portraitFormCol}>
+    <View
+      style={isLandscape ? styles.landscapeRightCol : styles.portraitFormCol}
+    >
       <View style={[styles.formCard, isLandscape && { padding: 15 }]}>
         <Text style={[styles.label, { marginTop: 0 }]}>Email Address</Text>
         <View
@@ -263,7 +258,12 @@ export default function LoginScreen() {
         </Pressable>
       </View>
 
-      <View style={[styles.dividerRow, isLandscape && { marginTop: 12, marginBottom: 8 }]}>
+      <View
+        style={[
+          styles.dividerRow,
+          isLandscape && { marginTop: 12, marginBottom: 8 },
+        ]}
+      >
         <View style={styles.dividerLine} />
         <Text style={styles.dividerText}>NEW TO CINEVERSE?</Text>
         <View style={styles.dividerLine} />
@@ -309,13 +309,7 @@ export default function LoginScreen() {
           bounces={false}
           automaticallyAdjustKeyboardInsets
         >
-          
-          <View
-            style={[
-              styles.topRow,
-              isLandscape && { marginBottom: 12 },
-            ]}
-          >
+          <View style={[styles.topRow, isLandscape && { marginBottom: 12 }]}>
             <Pressable
               style={styles.backButton}
               onPress={() => router.replace("/(auth)/welcome")}

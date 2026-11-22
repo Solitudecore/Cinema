@@ -58,9 +58,7 @@ export default function RegisterScreen() {
           const path = featured.backdrop_path || featured.poster_path;
           setBackdropUrl(`${IMAGE_URL}w1280${path}`);
         }
-      } catch {
-        
-      }
+      } catch {}
     };
 
     loadBackdrop();
@@ -96,10 +94,7 @@ export default function RegisterScreen() {
     }
 
     if (password.length < 6) {
-      Alert.alert(
-        "Validation",
-        "Password must be at least 6 characters long."
-      );
+      Alert.alert("Validation", "Password must be at least 6 characters long.");
       return;
     }
 
@@ -114,7 +109,7 @@ export default function RegisterScreen() {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         cleanEmail,
-        password
+        password,
       );
 
       await updateProfile(userCredential.user, {
@@ -173,12 +168,7 @@ export default function RegisterScreen() {
   );
 
   const renderFormCard = () => (
-    <View
-      style={[
-        styles.formCard,
-        isLandscape && { flex: 1.25, padding: 15 },
-      ]}
-    >
+    <View style={[styles.formCard, isLandscape && { flex: 1.25, padding: 15 }]}>
       <Text style={[styles.label, { marginTop: 0 }]}>Full Name</Text>
       <View
         style={[
@@ -279,10 +269,7 @@ export default function RegisterScreen() {
           autoCorrect={false}
           disableFullscreenUI={true}
         />
-        <Pressable
-          onPress={() => setShowPassword((prev) => !prev)}
-          hitSlop={8}
-        >
+        <Pressable onPress={() => setShowPassword((prev) => !prev)} hitSlop={8}>
           <Ionicons
             name={showPassword ? "eye-off-outline" : "eye-outline"}
             size={19}
@@ -310,10 +297,7 @@ export default function RegisterScreen() {
             ))}
           </View>
           <Text
-            style={[
-              styles.strengthLabel,
-              { color: passwordStrength.color },
-            ]}
+            style={[styles.strengthLabel, { color: passwordStrength.color }]}
           >
             {passwordStrength.label}
           </Text>
@@ -380,10 +364,7 @@ export default function RegisterScreen() {
 
       <View style={[styles.footer, isLandscape && { marginTop: 12 }]}>
         <Text style={styles.footerText}>Already have an account? </Text>
-        <Pressable
-          hitSlop={8}
-          onPress={() => router.replace("/(auth)/login")}
-        >
+        <Pressable hitSlop={8} onPress={() => router.replace("/(auth)/login")}>
           <Text style={styles.linkText}>Sign In</Text>
         </Pressable>
       </View>
@@ -417,13 +398,7 @@ export default function RegisterScreen() {
           bounces={false}
           automaticallyAdjustKeyboardInsets
         >
-          
-          <View
-            style={[
-              styles.topRow,
-              isLandscape && { marginBottom: 12 },
-            ]}
-          >
+          <View style={[styles.topRow, isLandscape && { marginBottom: 12 }]}>
             <Pressable
               style={styles.backButton}
               onPress={() => router.replace("/(auth)/welcome")}
