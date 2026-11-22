@@ -14,6 +14,7 @@ import {
   StatusBar,
   useWindowDimensions,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -294,6 +295,18 @@ export default function LoginScreen() {
         style={styles.overlay}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
+        <LinearGradient
+          colors={[
+            "rgba(9, 9, 16, 0.65)",
+            "rgba(9, 9, 16, 0.82)",
+            "rgba(9, 9, 16, 0.94)",
+          ]}
+          locations={[0, 0.5, 1]}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
+          pointerEvents="none"
+          style={styles.gradientOverlay}
+        />
         <ScrollView
           contentContainerStyle={[
             styles.scrollContent,
@@ -346,7 +359,13 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(9, 9, 16, 0.85)",
+  },
+  gradientOverlay: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
   },
   scrollContent: {
     flexGrow: 1,
