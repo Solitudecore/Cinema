@@ -115,16 +115,9 @@ export default function MovieDetailsScreen() {
     }
 
     const requestId = ++requestRef.current;
+    let receivedFreshData = false;
 
-    try {
-      if (!movieRef.current) {
-        setLoading(true);
-      }
-
-      setError("");
-
-      const data = await getMovieDetails(movieId);
-
+    const applyMovie = (data: MovieDetails) => {
       if (requestId !== requestRef.current) {
         return;
       }
@@ -134,6 +127,27 @@ export default function MovieDetailsScreen() {
       setLoading(false);
 
       addRecentlyViewed(data).catch(() => {});
+    };
+
+    try {
+      if (!movieRef.current) {
+        setLoading(true);
+      }
+
+      setError("");
+
+      const data = await getMovieDetails(movieId, (freshData) => {
+        receivedFreshData = true;
+        applyMovie(freshData);
+      });
+
+      if (requestId !== requestRef.current) {
+        return;
+      }
+
+      if (!receivedFreshData) {
+        applyMovie(data);
+      }
     } catch {
       if (requestId !== requestRef.current) {
         return;
