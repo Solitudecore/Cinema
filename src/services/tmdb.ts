@@ -10,29 +10,130 @@ const ACCESS_TOKEN = process.env.EXPO_PUBLIC_TMDB_ACCESS_TOKEN;
 
 const memoryCache = new Map<string, unknown>();
 let cacheVersion = 0;
+
 const pendingCacheWrites = new Set<Promise<void>>();
 
-async function fetchWithTimeout(
+const MAX_CONCURRENT_REQUESTS = 3;
+let activeRequests = 0;
+
+const requestQueue: Array<() => void> = [];
+
+type RequestOptions<T> = {
+  onFreshData?: (data: T) => void;
+};
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function enqueueRequest<T>(task: () => Promise<T>): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const run = () => {
+      activeRequests += 1;
+
+      task()
+        .then(resolve, reject)
+        .finally(() => {
+          activeRequests -= 1;
+
+          const next = requestQueue.shift();
+
+          if (next) {
+            next();
+          }
+        });
+    };
+
+    if (activeRequests < MAX_CONCURRENT_REQUESTS) {
+      run();
+    } else {
+      requestQueue.push(run);
+    }
+  });
+}
+
+async function fetchWithRetry<T>(
   url: string,
   options: RequestInit,
-  timeoutMs = 10000,
-): Promise<Response> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  timeoutMs = 15000,
+  retries = 2,
+): Promise<T> {
+  let lastError: unknown;
 
-  try {
-    return await fetch(url, {
-      ...options,
-      signal: controller.signal,
-    });
-  } finally {
-    clearTimeout(timer);
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const controller = new AbortController();
+
+    const timer = setTimeout(() => {
+      controller.abort();
+    }, timeoutMs);
+
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        const error = new Error(`TMDB HTTP ${response.status}`);
+
+        if (
+          response.status >= 400 &&
+          response.status < 500 &&
+          response.status !== 429
+        ) {
+          Object.assign(error, { retryable: false });
+          throw error;
+        }
+
+        throw error;
+      }
+
+      return (await response.json()) as T;
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        "retryable" in error &&
+        error.retryable === false
+      ) {
+        throw error;
+      }
+
+      lastError = error;
+
+      if (attempt < retries) {
+        await sleep(600 * (attempt + 1));
+      }
+    } finally {
+      clearTimeout(timer);
+    }
   }
+
+  throw lastError || new Error("TMDB request failed.");
+}
+
+function isValidCacheableData(
+  data: unknown,
+  skipEmptyCache = true,
+): boolean {
+  if (!data || typeof data !== "object") {
+    return false;
+  }
+
+  if (skipEmptyCache && "results" in data) {
+    const results = (data as { results?: unknown[] }).results;
+
+    if (!Array.isArray(results) || results.length === 0) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 async function tmdbRequest<T>(
   endpoint: string,
   params: Record<string, string | number> = {},
+  options: RequestOptions<T> = {},
 ): Promise<T> {
   if (!ACCESS_TOKEN) {
     throw new Error("TMDB API Token is missing!");
@@ -47,11 +148,13 @@ async function tmdbRequest<T>(
   });
 
   const queryString = query.toString();
+
   const cacheKey = `tmdb_cache_${endpoint}_${queryString}`;
+
   const requestCacheVersion = cacheVersion;
 
-  const networkPromise = (async () => {
-    const response = await fetchWithTimeout(
+  const networkPromise = enqueueRequest(async () => {
+    const data = await fetchWithRetry<T>(
       `${BASE_URL}${endpoint}?${queryString}`,
       {
         method: "GET",
@@ -60,16 +163,13 @@ async function tmdbRequest<T>(
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },
       },
-      10000,
+      
     );
 
-    if (!response.ok) {
-      throw new Error(`TMDB Error: ${response.status}`);
-    }
-
-    const data = (await response.json()) as T;
-
-    if (requestCacheVersion === cacheVersion) {
+    if (
+      requestCacheVersion === cacheVersion &&
+      isValidCacheableData(data, true)
+    ) {
       memoryCache.set(cacheKey, data);
 
       const writePromise = AsyncStorage.setItem(
@@ -78,15 +178,28 @@ async function tmdbRequest<T>(
       ).catch(() => {});
 
       pendingCacheWrites.add(writePromise);
-      void writePromise.then(() => pendingCacheWrites.delete(writePromise));
+
+      void writePromise.then(() => {
+        pendingCacheWrites.delete(writePromise);
+      });
+    }
+
+    if (requestCacheVersion === cacheVersion) {
+      try {
+        options.onFreshData?.(data);
+      } catch {}
     }
 
     return data;
-  })();
+  });
 
   if (memoryCache.has(cacheKey)) {
-    networkPromise.catch(() => {});
-    return memoryCache.get(cacheKey) as T;
+    const cached = memoryCache.get(cacheKey) as T;
+
+    if (isValidCacheableData(cached, true)) {
+      networkPromise.catch(() => {});
+      return cached;
+    }
   }
 
   try {
@@ -96,11 +209,26 @@ async function tmdbRequest<T>(
       return networkPromise;
     }
 
+    const updatedMemoryCache = memoryCache.get(cacheKey);
+
+    if (
+      updatedMemoryCache !== undefined &&
+      isValidCacheableData(updatedMemoryCache, true)
+    ) {
+      networkPromise.catch(() => {});
+      return updatedMemoryCache as T;
+    }
+
     if (cachedData) {
       const parsed = JSON.parse(cachedData) as T;
-      memoryCache.set(cacheKey, parsed);
-      networkPromise.catch(() => {});
-      return parsed;
+
+      if (isValidCacheableData(parsed, true)) {
+        memoryCache.set(cacheKey, parsed);
+
+        networkPromise.catch(() => {});
+
+        return parsed;
+      }
     }
   } catch {}
 
@@ -120,30 +248,47 @@ export const getTopRatedMovies = (page = 1) => {
 };
 
 export const searchMovies = (query: string, page = 1) => {
-  return tmdbRequest<MovieResponse>("/search/movie", {
-    query,
-    page,
-    include_adult: "false",
-  });
+  return tmdbRequest<MovieResponse>(
+    "/search/movie",
+    {
+      query: query.trim(),
+      page,
+      include_adult: "false",
+    },
+  );
 };
 
-export const getMovieDetails = (id: number) => {
-  return tmdbRequest<MovieDetails>(`/movie/${id}`, {
-    append_to_response: "credits,videos",
-  });
+export const getMovieDetails = (
+  id: number,
+  onFreshData?: (data: MovieDetails) => void,
+) => {
+  return tmdbRequest<MovieDetails>(
+    `/movie/${id}`,
+    {
+      append_to_response: "credits,videos",
+    },
+    {
+      onFreshData,
+    },
+  );
 };
 
 export const getCachedMovieBasic = (id: number): MovieDetails | null => {
   const exactKey = `tmdb_cache_/movie/${id}_language=en-US&append_to_response=credits%2Cvideos`;
+
   if (memoryCache.has(exactKey)) {
     return memoryCache.get(exactKey) as MovieDetails;
   }
 
   for (const value of memoryCache.values()) {
     if (value && typeof value === "object" && "results" in value) {
-      const list = (value as { results?: MovieDetails[] }).results;
+      const list = (value as { results?: Array<{ id: number }> }).results;
+
       const found = list?.find((item) => item.id === id);
-      if (found) return found;
+
+      if (found) {
+        return found as MovieDetails;
+      }
     }
   }
 
@@ -195,27 +340,36 @@ export const prefetchAppData = async () => {
     ];
 
     const uniqueMovies = Array.from(
-      new Map(combined.map((m) => [m.id, m])).values(),
+      new Map(combined.map((movie) => [movie.id, movie])).values(),
     ).slice(0, 8);
 
     uniqueMovies.forEach((movie) => {
       if (movie.poster_path) {
-        Image.prefetch(`${IMAGE_URL}w342${movie.poster_path}`).catch(() => {});
+        Image.prefetch(
+          `${IMAGE_URL}w342${movie.poster_path}`,
+        ).catch(() => {});
       }
+
       if (movie.backdrop_path) {
-        Image.prefetch(`${IMAGE_URL}w780${movie.backdrop_path}`).catch(
-          () => {},
-        );
+        Image.prefetch(
+          `${IMAGE_URL}w780${movie.backdrop_path}`,
+        ).catch(() => {});
       }
     });
 
     await Promise.allSettled(
       uniqueMovies.map(async (movie) => {
         const details = await getMovieDetails(movie.id);
+
         const trailer =
           details.videos?.results?.find(
-            (v) => v.site === "YouTube" && v.type === "Trailer",
-          ) || details.videos?.results?.find((v) => v.site === "YouTube");
+            (video) =>
+              video.site === "YouTube" &&
+              video.type === "Trailer",
+          ) ||
+          details.videos?.results?.find(
+            (video) => video.site === "YouTube",
+          );
 
         if (trailer?.key) {
           Image.prefetch(
@@ -229,12 +383,16 @@ export const prefetchAppData = async () => {
 
 export const clearTmdbCache = async (): Promise<number> => {
   cacheVersion += 1;
+
   memoryCache.clear();
 
   await Promise.allSettled(Array.from(pendingCacheWrites));
 
   const keys = await AsyncStorage.getAllKeys();
-  const cacheKeys = keys.filter((key) => key.startsWith("tmdb_cache_"));
+
+  const cacheKeys = keys.filter((key) =>
+    key.startsWith("tmdb_cache_"),
+  );
 
   if (cacheKeys.length > 0) {
     await AsyncStorage.multiRemove(cacheKeys);
