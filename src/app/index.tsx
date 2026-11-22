@@ -1,98 +1,141 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useEffect, useRef } from "react";
+import {
+  View,
+  Text,
+  Animated,
+  ActivityIndicator,
+  StyleSheet,
+} from "react-native";
+import { router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAppTheme } from "../hooks/useAppTheme";
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+const NETFLIX_RED = "#E50914";
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+export default function Index() {
+  const { colors } = useAppTheme();
+
+  const logoOpacity = useRef(new Animated.Value(0)).current;
+  const logoScale = useRef(new Animated.Value(0.86)).current;
+
+  useEffect(() => {
+    let isMounted = true;
+
+    Animated.parallel([
+      Animated.timing(logoOpacity, {
+        toValue: 1,
+        duration: 420,
+        useNativeDriver: true,
+      }),
+      Animated.spring(logoScale, {
+        toValue: 1,
+        friction: 6,
+        tension: 60,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    const checkInitialRoute = async () => {
+      try {
+        const [onboardingCompleted, isLoggedIn] = await Promise.all([
+          AsyncStorage.getItem("onboarding_completed"),
+          AsyncStorage.getItem("is_logged_in"),
+          new Promise((resolve) => setTimeout(resolve, 450)),
+        ]);
+
+        if (!isMounted) return;
+
+        if (onboardingCompleted !== "true") {
+          router.replace("/onboarding");
+          return;
+        }
+
+        if (isLoggedIn === "true") {
+          router.replace("/(drawer)/(tabs)/home");
+        } else {
+          router.replace("/(auth)/welcome");
+        }
+      } catch {
+        if (isMounted) {
+          router.replace("/(auth)/welcome");
+        }
+      }
+    };
+
+    checkInitialRoute();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [logoOpacity, logoScale]);
+
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <Animated.View
+        style={[
+          styles.brandContainer,
+          {
+            opacity: logoOpacity,
+            transform: [{ scale: logoScale }],
+          },
+        ]}
+      >
+        <View style={styles.brandBadge}>
+          <Text style={styles.brandLetter}>C</Text>
+        </View>
 
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+        <Text style={[styles.brandText, { color: colors.text }]}>
+          CINE<Text style={{ color: NETFLIX_RED }}>VERSE</Text>
+        </Text>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+        <Text style={[styles.tagline, { color: colors.muted }]}>
+          YOUR MOVIE UNIVERSE
+        </Text>
+      </Animated.View>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+      <View style={styles.footerLoader}>
+        <ActivityIndicator size="small" color={NETFLIX_RED} />
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
+    justifyContent: "center",
+    alignItems: "center",
   },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+  brandContainer: {
+    alignItems: "center",
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+  brandBadge: {
+    width: 58,
+    height: 58,
+    borderRadius: 14,
+    backgroundColor: NETFLIX_RED,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 14,
   },
-  title: {
-    textAlign: 'center',
+  brandLetter: {
+    color: "#FFFFFF",
+    fontSize: 34,
+    fontWeight: "900",
   },
-  code: {
-    textTransform: 'uppercase',
+  brandText: {
+    fontSize: 26,
+    fontWeight: "900",
+    letterSpacing: 3.5,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  tagline: {
+    fontSize: 10,
+    fontWeight: "800",
+    letterSpacing: 4,
+    marginTop: 8,
+  },
+  footerLoader: {
+    position: "absolute",
+    bottom: 52,
   },
 });
